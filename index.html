@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Аниме-кухня</title>
+<meta name="theme-color" content="#2D6BFF">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Аниме-кухня">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --font-display: 'Unbounded', system-ui, sans-serif;
+  --font-body: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bg: #F2F6FC; --surface: #FFFFFF; --fg: #0E1430; --muted: #55608A; --line: #D6DFF0;
+  --accent: #2D6BFF; --accent-ink: #FFFFFF; --glow: #BFD8FF; --warn: #7A4300; --warn-bg: #FFE9C7;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #080B1C; --surface: #10152F; --fg: #E8EEFF; --muted: #9AA6D0; --line: #222B52;
+    --accent: #7CC4FF; --accent-ink: #06122B; --glow: #17306B; --warn: #FFD28A; --warn-bg: #3A2A0A;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.5;
+  padding-top: max(16px, env(safe-area-inset-top, 0px));
+  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+#app { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.2; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--accent); }
+img { max-width: 100%; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.hero { border-radius: 20px; padding: 28px 20px 24px; border: 1px solid var(--line);
+  background: radial-gradient(70% 140% at 85% 0%, var(--glow), transparent 70%), var(--surface); }
+.hero .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.hero h1 { font-size: 28px; }
+.hero p.sub { margin-top: 10px; color: var(--muted); max-width: 46ch; }
+
+.group { display: flex; flex-direction: column; gap: 10px; }
+.group h2 { font-size: 15px; letter-spacing: .02em; }
+.group .tag { color: var(--muted); font-family: var(--font-body); font-weight: 500; font-size: 13px; margin-left: 6px; }
+.rcard { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--fg);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+.rcard:active { border-color: var(--accent); }
+.rcard .t { font-family: var(--font-display); font-weight: 500; font-size: 17px; line-height: 1.25; }
+.rcard .m { color: var(--muted); font-size: 14px; }
+
+.btn { appearance: none; border: 0; cursor: pointer; font: inherit; font-weight: 600; text-align: center;
+  background: var(--accent); color: var(--accent-ink); border-radius: 14px; padding: 12px 18px; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; }
+.back { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; font-weight: 600; }
+
+.rhead { display: flex; flex-direction: column; gap: 12px; }
+.rhead .who { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.rhead h1 { font-size: 26px; }
+.metas { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+.meta { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; min-width: 0; }
+.meta .k { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.meta .v { font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
+.intro { color: var(--muted); max-width: 60ch; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.panel h2 { font-size: 17px; }
+.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.checks li { border-top: 1px solid var(--line); display: flex; gap: 12px; align-items: center; padding: 8px 0; }
+.checks li:first-child { border-top: 0; }
+.chk { display: flex; gap: 12px; align-items: center; cursor: pointer; min-height: 48px; flex: 1; min-width: 0; }
+.chk input { width: 24px; height: 24px; margin: 0; flex: none; accent-color: var(--accent); }
+.chk span { min-width: 0; overflow-wrap: anywhere; }
+.chk input:checked ~ span { color: var(--muted); text-decoration: line-through; }
+.thumb { appearance: none; padding: 0; border: 0; flex: none; width: 56px; height: 56px; border-radius: 12px; background: var(--line);
+  overflow: hidden; display: grid; place-items: center; cursor: pointer; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb.empty { border: 1.5px dashed var(--line); background: transparent; cursor: default; }
+
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.step .row { display: flex; gap: 12px; align-items: flex-start; }
+.step .n { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+  font-family: var(--font-display); font-weight: 700; font-size: 14px; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.step .txt { min-width: 0; overflow-wrap: anywhere; }
+.step.done .txt { color: var(--muted); }
+.badge { display: inline-block; background: var(--warn-bg); color: var(--warn); font-weight: 600; font-size: 12px; letter-spacing: .04em;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 999px; margin-bottom: 6px; }
+.photo img { width: 100%; height: auto; border-radius: 12px; display: block; background: var(--line); }
+.notice { background: var(--surface); border: 1px dashed var(--line); border-radius: 14px; padding: 14px; color: var(--muted); font-size: 14px; }
+
+#lb { position: fixed; inset: 0; z-index: 30; background: rgba(5, 8, 20, .82); display: grid; place-items: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+#lb .card { background: var(--surface); border-radius: 20px; padding: 16px; width: min(360px, 100%); display: flex; flex-direction: column; gap: 12px; }
+#lb h3 { font-size: 16px; }
+#lb img { width: 100%; height: auto; border-radius: 12px; display: block; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="lb" hidden></div>
+
+<script>
+(function () {
+  /* Картинки лежат в папке img/ и называются по ключу: img/<ключ>.jpg. Нет файла — картинка просто не показывается. */
+  var BOOK = [{
+    id: 'daifuku',
+    character: 'Сатору Годжо',
+    series: 'Магическая битва',
+    title: 'Клубничные дайфуку',
+    time: '40 минут',
+    servings: '8 штук',
+    rank: 'ранг 4, самый лёгкий',
+    intro: 'Годжо обожает сладкое, поэтому его блюдо это десерт. Дайфуку: мягкая рисовая лепёшка с ягодой и начинкой внутри. Синий краситель в тесте делает её цвета «шести глаз».',
+    ingredients: [
+      { t: 'Клейкая рисовая мука (мотико или ширатамако): 100 г', n: 'Клейкая рисовая мука', k: 'daifuku-ing-flour' },
+      { t: 'Сахар: 40 г', n: 'Сахар', k: 'daifuku-ing-sugar' },
+      { t: 'Вода: 150 мл', n: 'Вода', k: 'daifuku-ing-water' },
+      { t: 'Синий пищевой краситель, по желанию: 2–3 капли', n: 'Синий пищевой краситель', k: 'daifuku-ing-dye' },
+      { t: 'Картофельный или кукурузный крахмал для посыпки: 3 ст. ложки', n: 'Крахмал', k: 'daifuku-ing-starch' },
+      { t: 'Мелкая клубника: 8 ягод', n: 'Клубника', k: 'daifuku-ing-strawberry' },
+      { t: 'Паста из красной фасоли (анко): 120 г', n: 'Паста из красной фасоли (анко)', k: 'daifuku-ing-anko' },
+      { t: 'Если нет анко: 120 г сливочного сыра, смешанного с 2 ст. ложками сахарной пудры', n: 'Сливочный сыр', k: 'daifuku-ing-cheese' }
+    ],
+    steps: [
+      { t: 'Вымой клубнику, хорошо обсуши бумажным полотенцем и срежь хвостики. Мокрая ягода размочит тесто.', k: 'daifuku-step-1' },
+      { t: 'Раздели пасту на 8 частей. Заверни каждую ягоду в пасту так, чтобы острый кончик немного выглядывал. Убери в холодильник на 10 минут.', k: 'daifuku-step-2' },
+      { t: 'В миске для микроволновки размешай муку, сахар и воду до гладкости, без комков. Добавь краситель, если хочешь синий цвет, как глаза Годжо.', k: 'daifuku-step-3' },
+      { t: 'Накрой миску плёнкой с проколом и грей 1 минуту. Перемешай лопаткой и грей ещё 1 минуту. Тесто станет полупрозрачным и тягучим. Миска очень горячая.', adult: true, k: 'daifuku-step-4' },
+      { t: 'Посыпь доску крахмалом, выложи тесто и подожди 3 минуты, пока оно станет тёплым. Посыпь его сверху крахмалом, чтобы не липло к рукам.', k: 'daifuku-step-5' },
+      { t: 'Раздели тесто на 8 равных кусков пластиковым скребком или ножом.', adult: true, k: 'daifuku-step-6' },
+      { t: 'Разомни кусок в круглую лепёшку, положи в центр ягоду с начинкой, стяни края наверх и защипни шов. Переверни швом вниз. Так сделай со всеми.', k: 'daifuku-step-7' },
+      { t: 'Стряхни лишний крахмал кисточкой. Ешь в тот же день: на следующий день моти твердеет.', k: 'daifuku-step-8' }
+    ]
+  }];
+
+  var checks = {};
+  var appEl = document.getElementById('app');
+  var lbEl = document.getElementById('lb');
+  try { checks = JSON.parse(localStorage.getItem('anime-kitchen-checks') || '{}') || {}; } catch (e) { checks = {}; }
+  function saveChecks() { try { localStorage.setItem('anime-kitchen-checks', JSON.stringify(checks)); } catch (e) {} }
+
+  function h(tag, attrs) {
+    var el = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      var v = attrs[k];
+      if (k === 'class') el.className = v;
+      else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v);
+      else if (v !== false && v != null) el.setAttribute(k, v);
+    });
+    for (var i = 2; i < arguments.length; i++) {
+      [].concat(arguments[i]).forEach(function (kid) {
+        if (kid == null || kid === false) return;
+        el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+      });
+    }
+    return el;
+  }
+
+  function imgUrl(key) { return 'img/' + key + '.jpg'; }
+
+  function closeLb() { lbEl.hidden = true; lbEl.replaceChildren(); }
+  function openLb(title, key) {
+    var card = h('div', { class: 'card', role: 'dialog', 'aria-label': title },
+      h('h3', null, title),
+      h('img', { src: imgUrl(key), alt: title }),
+      h('button', { type: 'button', class: 'btn', onclick: closeLb }, 'Закрыть'));
+    lbEl.replaceChildren(card);
+    lbEl.hidden = false;
+  }
+  lbEl.addEventListener('click', function (ev) { if (ev.target === lbEl) closeLb(); });
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') closeLb(); });
+
+  function route() {
+    var hash = (location.hash || '').replace(/^#/, '');
+    return hash.indexOf('r-') === 0 ? { id: hash.slice(2) } : { id: null };
+  }
+
+  function viewHome() {
+    var groups = {}, order = [];
+    BOOK.forEach(function (r) {
+      if (!groups[r.character]) { groups[r.character] = []; order.push(r.character); }
+      groups[r.character].push(r);
+    });
+    var out = [h('header', { class: 'hero' },
+      h('div', { class: 'eyebrow' }, 'Семейная книга рецептов'),
+      h('h1', null, 'Аниме-кухня'),
+      h('p', { class: 'sub' }, 'Любимые блюда любимых персонажей. Готовим вместе: сын выбирает героя, папа находит рецепт.'))];
+    order.forEach(function (name) {
+      var rs = groups[name];
+      out.push(h('section', { class: 'group' },
+        h('h2', null, name, rs[0].series ? h('span', { class: 'tag' }, rs[0].series) : null),
+        rs.map(function (r) {
+          return h('a', { class: 'rcard', href: '#r-' + r.id },
+            h('span', { class: 't' }, r.title),
+            h('span', { class: 'm' }, [r.time, r.servings].filter(Boolean).join(' · ')));
+        })));
+    });
+    return out;
+  }
+
+  function chk(key, text) {
+    var input = h('input', { type: 'checkbox', id: 'c-' + key });
+    input.checked = !!checks[key];
+    input.addEventListener('change', function () {
+      checks[key] = input.checked; saveChecks();
+      var step = input.closest('.step'); if (step) step.classList.toggle('done', input.checked);
+    });
+    return h('label', { class: 'chk', for: 'c-' + key }, input, h('span', null, text));
+  }
+
+  /* Миниатюра ингредиента: если файла нет, остаётся пустая рамка. */
+  function thumb(ing) {
+    var btn = h('button', { type: 'button', class: 'thumb empty', 'aria-label': ing.n }, '');
+    var probe = new Image();
+    probe.onload = function () {
+      btn.className = 'thumb';
+      btn.append(h('img', { src: probe.src, alt: '', width: 56, height: 56 }));
+      btn.addEventListener('click', function () { openLb(ing.n, ing.k); });
+    };
+    probe.src = imgUrl(ing.k);
+    return btn;
+  }
+
+  function stepPhoto(s, i) {
+    var wrap = h('div', { class: 'photo' });
+    var probe = new Image();
+    probe.onload = function () { wrap.append(h('img', { src: probe.src, alt: 'Фото к шагу ' + (i + 1), loading: 'lazy' })); };
+    probe.src = imgUrl(s.k);
+    return wrap;
+  }
+
+  function viewRecipe(id) {
+    var r = BOOK.filter(function (x) { return x.id === id; })[0];
+    if (!r) return [h('a', { class: 'back', href: '#' }, '← К книге'), h('p', { class: 'notice' }, 'Такого рецепта нет.')];
+    var metas = [['Время', r.time], ['Порций', r.servings], ['Сложность', r.rank]].filter(function (m) { return m[1]; });
+    var out = [
+      h('a', { class: 'back', href: '#' }, '← К книге'),
+      h('div', { class: 'rhead' },
+        h('div', { class: 'who' }, r.character),
+        h('h1', null, r.title),
+        h('div', { class: 'metas' }, metas.map(function (m) {
+          return h('div', { class: 'meta' }, h('div', { class: 'k' }, m[0]), h('div', { class: 'v' }, m[1]));
+        })),
+        r.intro ? h('p', { class: 'intro' }, r.intro) : null)
+    ];
+    out.push(h('section', { class: 'panel' }, h('h2', null, 'Что нужно'),
+      h('ul', { class: 'checks' }, r.ingredients.map(function (ing, i) {
+        return h('li', null, thumb(ing), chk(r.id + ':i' + i, ing.t));
+      }))));
+    out.push(h('h2', null, 'Как готовим'));
+    out.push(h('ol', { class: 'steps' }, r.steps.map(function (s, i) {
+      var key = r.id + ':s' + i;
+      return h('li', { class: 'step' + (checks[key] ? ' done' : '') },
+        h('div', { class: 'row' },
+          h('div', { class: 'n' }, String(i + 1)),
+          h('div', { class: 'txt' },
+            s.adult ? h('span', { class: 'badge' }, 'Нужен взрослый') : null,
+            h('p', null, s.t))),
+        stepPhoto(s, i),
+        chk(key, 'Шаг готов'));
+    })));
+    return out;
+  }
+
+  function render() {
+    var r = route();
+    var nodes = r.id ? viewRecipe(r.id) : viewHome();
+    appEl.replaceChildren.apply(appEl, nodes);
+  }
+  window.addEventListener('hashchange', function () { closeLb(); render(); window.scrollTo(0, 0); });
+  render();
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+  }
+})();
+</script>
+</body>
+</html>
