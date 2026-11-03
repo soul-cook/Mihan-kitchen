@@ -21,13 +21,13 @@
   --font-display: 'Unbounded', system-ui, sans-serif;
   --font-body: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --bg: #F2F6FC; --surface: #FFFFFF; --fg: #0E1430; --muted: #55608A; --line: #D6DFF0;
-  --accent: #2D6BFF; --accent-ink: #FFFFFF; --glow: #BFD8FF; --warn: #7A4300; --warn-bg: #FFE9C7;
+  --accent: #2D6BFF; --accent-ink: #FFFFFF; --glow: #BFD8FF; --warn: #7A4300; --warn-bg: #FFE9C7; --heart: #D93A5F;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
     --bg: #080B1C; --surface: #10152F; --fg: #E8EEFF; --muted: #9AA6D0; --line: #222B52;
-    --accent: #7CC4FF; --accent-ink: #06122B; --glow: #17306B; --warn: #FFD28A; --warn-bg: #3A2A0A;
+    --accent: #7CC4FF; --accent-ink: #06122B; --glow: #17306B; --warn: #FFD28A; --warn-bg: #3A2A0A; --heart: #FF7A97;
   }
 }
 * { box-sizing: border-box; }
@@ -36,10 +36,13 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.5;
   padding-top: max(16px, env(safe-area-inset-top, 0px));
-  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
+body.timing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px)); }
+body.cooking { padding-bottom: calc(170px + env(safe-area-inset-bottom, 0px)); }
+body.cooking.timing { padding-bottom: calc(240px + env(safe-area-inset-bottom, 0px)); }
 #app { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.2; margin: 0; text-wrap: balance; }
 p { margin: 0; }
@@ -53,21 +56,42 @@ img { max-width: 100%; }
 .hero h1 { font-size: 28px; }
 .hero p.sub { margin-top: 10px; color: var(--muted); max-width: 46ch; }
 
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.panel h2 { font-size: 17px; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+
+.pts { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.pts .big { font-family: var(--font-display); font-weight: 700; font-size: 36px; font-variant-numeric: tabular-nums; line-height: 1; }
+.progress { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.progress i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+
+.search { font: inherit; color: var(--fg); background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; width: 100%; min-width: 0; }
 .group { display: flex; flex-direction: column; gap: 10px; }
 .group h2 { font-size: 15px; letter-spacing: .02em; }
 .group .tag { color: var(--muted); font-family: var(--font-body); font-weight: 500; font-size: 13px; margin-left: 6px; }
 .rcard { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--fg);
   background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
 .rcard:active { border-color: var(--accent); }
+.rcard .top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
 .rcard .t { font-family: var(--font-display); font-weight: 500; font-size: 17px; line-height: 1.25; }
 .rcard .m { color: var(--muted); font-size: 14px; }
+.heart { flex: none; width: 20px; height: 20px; color: var(--heart); }
 
-.btn { appearance: none; border: 0; cursor: pointer; font: inherit; font-weight: 600; text-align: center;
+.btn { appearance: none; border: 0; cursor: pointer; font: inherit; font-weight: 600; text-align: center; text-decoration: none;
   background: var(--accent); color: var(--accent-ink); border-radius: 14px; padding: 12px 18px; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+.btn.big { min-height: 56px; font-size: 18px; width: 100%; }
+.btn.small { min-height: 40px; padding: 8px 14px; font-size: 14px; border-radius: 12px; }
+.btn[disabled] { opacity: .45; cursor: default; }
 .back { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; font-weight: 600; }
+.icon-btn { appearance: none; cursor: pointer; flex: none; width: 44px; height: 44px; border-radius: 12px; border: 1.5px solid var(--line); background: transparent; color: var(--muted); display: grid; place-items: center; }
+.icon-btn svg { width: 22px; height: 22px; }
+.icon-btn[aria-pressed="true"] { color: var(--heart); border-color: var(--heart); }
 
 .rhead { display: flex; flex-direction: column; gap: 12px; }
 .rhead .who { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.titlerow { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; }
 .rhead h1 { font-size: 26px; }
 .metas { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
 .meta { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; min-width: 0; }
@@ -75,15 +99,19 @@ img { max-width: 100%; }
 .meta .v { font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
 .intro { color: var(--muted); max-width: 60ch; }
 
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.panel h2 { font-size: 17px; }
+.seg { display: flex; gap: 6px; }
+.seg button { flex: 1; min-width: 0; min-height: 44px; border: 1.5px solid var(--line); background: transparent; color: var(--fg); border-radius: 12px; font: inherit; font-weight: 600; cursor: pointer; padding: 6px 4px; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
 .checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .checks li { border-top: 1px solid var(--line); display: flex; gap: 12px; align-items: center; padding: 8px 0; }
 .checks li:first-child { border-top: 0; }
 .chk { display: flex; gap: 12px; align-items: center; cursor: pointer; min-height: 48px; flex: 1; min-width: 0; }
 .chk input { width: 24px; height: 24px; margin: 0; flex: none; accent-color: var(--accent); }
-.chk span { min-width: 0; overflow-wrap: anywhere; }
-.chk input:checked ~ span { color: var(--muted); text-decoration: line-through; }
+.chk input:checked ~ * { color: var(--muted); text-decoration: line-through; }
+.ingtxt { display: flex; flex-direction: column; min-width: 0; flex: 1; overflow-wrap: anywhere; }
+.ingtxt .note { font-size: 13px; color: var(--muted); }
+.amt { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; text-align: right; }
 .thumb { appearance: none; padding: 0; border: 0; flex: none; width: 56px; height: 56px; border-radius: 12px; background: var(--line);
   overflow: hidden; display: grid; place-items: center; cursor: pointer; }
 .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -99,59 +127,88 @@ img { max-width: 100%; }
 .badge { display: inline-block; background: var(--warn-bg); color: var(--warn); font-weight: 600; font-size: 12px; letter-spacing: .04em;
   text-transform: uppercase; padding: 4px 10px; border-radius: 999px; margin-bottom: 6px; }
 .photo img { width: 100%; height: auto; border-radius: 12px; display: block; background: var(--line); }
+.photo:empty { display: none; }
 .notice { background: var(--surface); border: 1px dashed var(--line); border-radius: 14px; padding: 14px; color: var(--muted); font-size: 14px; }
+
+.cook { display: flex; flex-direction: column; gap: 16px; }
+.cook .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.cook .count { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.cook .stepText { font-size: 22px; line-height: 1.4; font-weight: 500; overflow-wrap: anywhere; }
+.cook h2 { font-size: 24px; }
+.cook .done-mark { font-family: var(--font-display); font-size: 28px; }
+.cookbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; background: var(--surface); border-top: 1px solid var(--line);
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.cookbar .in { max-width: 640px; margin: 0 auto; display: flex; gap: 10px; }
+.cookbar .btn { flex: 1; min-height: 56px; font-size: 17px; }
+.cookbar .btn.ghost { flex: 0 0 34%; }
+
+.gift { display: flex; gap: 12px; align-items: center; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 12px; }
+.gift:first-of-type { border-top: 0; padding-top: 0; }
+.gift .gt { min-width: 0; overflow-wrap: anywhere; }
+.gift .gc { font-size: 13px; color: var(--muted); }
+
+#timer { position: fixed; left: 0; right: 0; z-index: 20; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  padding: 0 max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); }
+body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+#timer .tbox { max-width: 640px; margin: 0 auto; background: var(--surface); border: 2px solid var(--accent); border-radius: 16px; padding: 10px 12px 10px 16px;
+  display: flex; gap: 12px; align-items: center; justify-content: space-between; box-shadow: 0 6px 24px rgba(5, 8, 20, .25); }
+#timer .tbox.ring { background: var(--accent); color: var(--accent-ink); }
+#timer .tl { min-width: 0; display: flex; flex-direction: column; }
+#timer .tlabel { font-size: 13px; opacity: .8; overflow-wrap: anywhere; }
+#timer .ttime { font-family: var(--font-display); font-weight: 700; font-size: 24px; font-variant-numeric: tabular-nums; }
+#timer .tbox.ring .btn { background: var(--accent-ink); color: var(--accent); }
 
 #lb { position: fixed; inset: 0; z-index: 30; background: rgba(5, 8, 20, .82); display: grid; place-items: center;
   padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
-#lb .card { background: var(--surface); border-radius: 20px; padding: 16px; width: min(360px, 100%); display: flex; flex-direction: column; gap: 12px; }
+#lb .card { background: var(--surface); border-radius: 20px; padding: 16px; width: min(360px, 100%); max-height: 100%; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
 #lb h3 { font-size: 16px; }
 #lb img { width: 100%; height: auto; border-radius: 12px; display: block; }
+#lb .acts { display: flex; gap: 8px; flex-wrap: wrap; }
+#lb .acts .btn { flex: 1; }
+#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  background: var(--fg); color: var(--bg); padding: 12px 16px; border-radius: 12px; font-size: 14px; max-width: calc(100% - 32px); z-index: 40; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
 <div id="app"></div>
+<div id="timer" hidden>
+  <div class="tbox" id="tbox">
+    <div class="tl"><span class="tlabel" id="tlabel"></span><span class="ttime" id="ttime"></span></div>
+    <button type="button" class="btn small" id="tbtn">Стоп</button>
+  </div>
+</div>
 <div id="lb" hidden></div>
+<div id="toast" role="status" hidden></div>
 
+<script src="data.js"></script>
 <script>
 (function () {
-  /* Картинки лежат в папке img/ и называются по ключу: img/<ключ>.jpg. Нет файла — картинка просто не показывается. */
-  var BOOK = [{
-    id: 'daifuku',
-    character: 'Сатору Годжо',
-    series: 'Магическая битва',
-    title: 'Клубничные дайфуку',
-    time: '40 минут',
-    servings: '8 штук',
-    rank: 'ранг 4, самый лёгкий',
-    intro: 'Годжо обожает сладкое, поэтому его блюдо это десерт. Дайфуку: мягкая рисовая лепёшка с ягодой и начинкой внутри. Синий краситель в тесте делает её цвета «шести глаз».',
-    ingredients: [
-      { t: 'Клейкая рисовая мука (мотико или ширатамако): 100 г', n: 'Клейкая рисовая мука', k: 'daifuku-ing-flour' },
-      { t: 'Сахар: 40 г', n: 'Сахар', k: 'daifuku-ing-sugar' },
-      { t: 'Вода: 150 мл', n: 'Вода', k: 'daifuku-ing-water' },
-      { t: 'Синий пищевой краситель, по желанию: 2–3 капли', n: 'Синий пищевой краситель', k: 'daifuku-ing-dye' },
-      { t: 'Картофельный или кукурузный крахмал для посыпки: 3 ст. ложки', n: 'Крахмал', k: 'daifuku-ing-starch' },
-      { t: 'Мелкая клубника: 8 ягод', n: 'Клубника', k: 'daifuku-ing-strawberry' },
-      { t: 'Паста из красной фасоли (анко): 120 г', n: 'Паста из красной фасоли (анко)', k: 'daifuku-ing-anko' },
-      { t: 'Если нет анко: 120 г сливочного сыра, смешанного с 2 ст. ложками сахарной пудры', n: 'Сливочный сыр', k: 'daifuku-ing-cheese' }
-    ],
-    steps: [
-      { t: 'Вымой клубнику, хорошо обсуши бумажным полотенцем и срежь хвостики. Мокрая ягода размочит тесто.', k: 'daifuku-step-1' },
-      { t: 'Раздели пасту на 8 частей. Заверни каждую ягоду в пасту так, чтобы острый кончик немного выглядывал. Убери в холодильник на 10 минут.', k: 'daifuku-step-2' },
-      { t: 'В миске для микроволновки размешай муку, сахар и воду до гладкости, без комков. Добавь краситель, если хочешь синий цвет, как глаза Годжо.', k: 'daifuku-step-3' },
-      { t: 'Накрой миску плёнкой с проколом и грей 1 минуту. Перемешай лопаткой и грей ещё 1 минуту. Тесто станет полупрозрачным и тягучим. Миска очень горячая.', adult: true, k: 'daifuku-step-4' },
-      { t: 'Посыпь доску крахмалом, выложи тесто и подожди 3 минуты, пока оно станет тёплым. Посыпь его сверху крахмалом, чтобы не липло к рукам.', k: 'daifuku-step-5' },
-      { t: 'Раздели тесто на 8 равных кусков пластиковым скребком или ножом.', adult: true, k: 'daifuku-step-6' },
-      { t: 'Разомни кусок в круглую лепёшку, положи в центр ягоду с начинкой, стяни края наверх и защипни шов. Переверни швом вниз. Так сделай со всеми.', k: 'daifuku-step-7' },
-      { t: 'Стряхни лишний крахмал кисточкой. Ешь в тот же день: на следующий день моти твердеет.', k: 'daifuku-step-8' }
-    ]
-  }];
+  var BOOK = window.BOOK || [], CHARS = window.CHARS || {}, GIFTS = window.GIFTS || [];
+  var MULTS = [0.5, 1, 2];
+  var KEY = 'ak-state-v2', TKEY = 'ak-timer';
+  var S = { checks: {}, servings: {}, fav: {}, cooked: [], earned: 0, spent: 0, claimed: [] };
+  try {
+    var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (raw && typeof raw === 'object') Object.keys(S).forEach(function (k) { if (raw[k] != null) S[k] = raw[k]; });
+  } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function balance() { return S.earned - S.spent; }
 
-  var checks = {};
   var appEl = document.getElementById('app');
   var lbEl = document.getElementById('lb');
-  try { checks = JSON.parse(localStorage.getItem('anime-kitchen-checks') || '{}') || {}; } catch (e) { checks = {}; }
-  function saveChecks() { try { localStorage.setItem('anime-kitchen-checks', JSON.stringify(checks)); } catch (e) {} }
+  var toastEl = document.getElementById('toast');
+  var toastTimer = null;
+  var HEART = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.6 5 6 5c2 0 3.4 1.1 4 2.4h4C14.6 6.1 16 5 18 5c3.4 0 5.1 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg>';
+
+  /* Цвета персонажей */
+  var css = '';
+  Object.keys(CHARS).forEach(function (k) {
+    var c = CHARS[k];
+    css += '[data-char="' + k + '"]{--accent:' + c.accent + ';--glow:' + c.glow + ';--accent-ink:' + (c.ink || '#fff') + '}';
+    css += '@media (prefers-color-scheme: dark){[data-char="' + k + '"]{--accent:' + (c.accentDk || c.accent) + ';--glow:' + (c.glowDk || c.glow) + ';--accent-ink:' + (c.inkDk || c.ink || '#fff') + '}}';
+  });
+  var styleEl = document.createElement('style'); styleEl.textContent = css; document.head.append(styleEl);
 
   function h(tag, attrs) {
     var el = document.createElement(tag);
@@ -169,119 +226,410 @@ img { max-width: 100%; }
     }
     return el;
   }
+  function svg(html) { var s = document.createElement('span'); s.innerHTML = html; return s.firstChild; }
 
+  function toast(msg) {
+    toastEl.textContent = msg; toastEl.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.hidden = true; }, 3500);
+  }
+
+  function plural(n, f) {
+    var a = Math.abs(n) % 100, b = a % 10;
+    if (a > 10 && a < 20) return f[2];
+    if (b > 1 && b < 5) return f[1];
+    if (b === 1) return f[0];
+    return f[2];
+  }
+  var PTS = ['балл', 'балла', 'баллов'];
+  function find(id) { return BOOK.filter(function (x) { return x.id === id; })[0]; }
+  function curMult(r) { var i = S.servings[r.id]; return MULTS[i == null ? 1 : i]; }
+  function servCount(r, mult) { return Math.max(1, Math.round(r.base * (mult == null ? curMult(r) : mult))); }
+  function servLabel(r, mult) { var n = servCount(r, mult); return n + ' ' + plural(n, r.unitNoun); }
+
+  function fmtNum(v) {
+    if (v % 1 === 0) return String(v);
+    var f = Math.floor(v);
+    return (f ? String(f) : '') + '½';
+  }
+  function unitText(u, v) { if (!Array.isArray(u)) return u; return v % 1 ? u[1] : plural(v, u); }
+  function qtyText(ing, mult) {
+    var m = ing.fixed ? 1 : mult, q = ing.q, u = ing.u;
+    if (q == null) return '';
+    if (Array.isArray(q)) {
+      var a = q.map(function (x) { return Math.round(x * m * 2) / 2; });
+      return a.map(fmtNum).join('–') + (u ? ' ' + unitText(u, a[a.length - 1]) : '');
+    }
+    var v = q * m;
+    if (Array.isArray(u)) {
+      v = ing.half ? Math.max(0.5, Math.round(v * 2) / 2) : Math.max(1, Math.round(v));
+      return fmtNum(v) + ' ' + unitText(u, v);
+    }
+    if (u === 'г' || u === 'мл') { v = v >= 20 ? Math.round(v / 5) * 5 : Math.round(v); return v + ' ' + u; }
+    return fmtNum(Math.round(v * 2) / 2) + (u ? ' ' + u : '');
+  }
+  function fill(text, r) {
+    var cnt = servCount(r);
+    return text.replace(/\{n ([^|}]+)\|([^|}]+)\|([^}]+)\}/g, function (m, a, b, c2) { return cnt + ' ' + plural(cnt, [a, b, c2]); });
+  }
+  function fmtTime(sec) {
+    sec = Math.max(0, sec);
+    var hh = Math.floor(sec / 3600), mm = Math.floor((sec % 3600) / 60), ss = sec % 60;
+    var p = function (x) { return (x < 10 ? '0' : '') + x; };
+    return hh ? hh + ':' + p(mm) + ':' + p(ss) : mm + ':' + p(ss);
+  }
+  function timerWord(sec) {
+    if (sec >= 3600) { var hh = sec / 3600; return (hh % 1 ? hh.toFixed(1).replace('.', ',') : hh) + ' ч'; }
+    if (sec >= 60) return Math.round(sec / 60) + ' мин';
+    return sec + ' сек';
+  }
+
+  /* Картинки: файл img/<ключ>.jpg, если файла нет, ничего не показываем */
+  var imgOk = {};
   function imgUrl(key) { return 'img/' + key + '.jpg'; }
+  function withImage(key, onOk) {
+    if (!key || imgOk[key] === false) return;
+    if (imgOk[key] === true) { onOk(imgUrl(key)); return; }
+    var p = new Image();
+    p.onload = function () { imgOk[key] = true; onOk(p.src); };
+    p.onerror = function () { imgOk[key] = false; };
+    p.src = imgUrl(key);
+  }
+  function photoEl(key, alt) {
+    var wrap = h('div', { class: 'photo' });
+    withImage(key, function (src) { wrap.append(h('img', { src: src, alt: alt, loading: 'lazy' })); });
+    return wrap;
+  }
+  function thumb(ing) {
+    var btn = h('button', { type: 'button', class: 'thumb empty', 'aria-label': ing.n });
+    withImage(ing.k, function (src) {
+      btn.className = 'thumb';
+      btn.replaceChildren(h('img', { src: src, alt: '', width: 56, height: 56 }));
+      btn.addEventListener('click', function () { openLb(ing.n, ing.k); });
+    });
+    return btn;
+  }
 
+  /* Окно */
   function closeLb() { lbEl.hidden = true; lbEl.replaceChildren(); }
-  function openLb(title, key) {
-    var card = h('div', { class: 'card', role: 'dialog', 'aria-label': title },
-      h('h3', null, title),
-      h('img', { src: imgUrl(key), alt: title }),
-      h('button', { type: 'button', class: 'btn', onclick: closeLb }, 'Закрыть'));
-    lbEl.replaceChildren(card);
+  function dialog(title, nodes, buttons) {
+    var acts = h('div', { class: 'acts' }, (buttons || [{ text: 'Закрыть' }]).map(function (b) {
+      return h('button', { type: 'button', class: 'btn' + (b.ghost ? ' ghost' : ''), onclick: function () { closeLb(); if (b.fn) b.fn(); } }, b.text);
+    }));
+    lbEl.replaceChildren(h('div', { class: 'card', role: 'dialog', 'aria-label': title }, h('h3', null, title), nodes, acts));
     lbEl.hidden = false;
   }
+  function openLb(title, key) { dialog(title, h('img', { src: imgUrl(key), alt: title })); }
   lbEl.addEventListener('click', function (ev) { if (ev.target === lbEl) closeLb(); });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') closeLb(); });
 
-  function route() {
-    var hash = (location.hash || '').replace(/^#/, '');
-    return hash.indexOf('r-') === 0 ? { id: hash.slice(2) } : { id: null };
+  /* Таймер */
+  var timer = null, tick = null, audio = null, rang = false;
+  try { timer = JSON.parse(localStorage.getItem(TKEY) || 'null'); } catch (e) { timer = null; }
+  var timerEl = document.getElementById('timer'), tbox = document.getElementById('tbox');
+  var tlabel = document.getElementById('tlabel'), ttime = document.getElementById('ttime'), tbtn = document.getElementById('tbtn');
+  function saveTimer() { try { if (timer) localStorage.setItem(TKEY, JSON.stringify(timer)); else localStorage.removeItem(TKEY); } catch (e) {} }
+  function ensureAudio() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC && !audio) audio = new AC();
+      if (audio && audio.state === 'suspended') audio.resume();
+    } catch (e) {}
+  }
+  function beep() {
+    if (!audio) return;
+    try {
+      [0, 0.4, 0.8].forEach(function (t) {
+        var o = audio.createOscillator(), g = audio.createGain();
+        o.frequency.value = 880; g.gain.value = 0.25; o.connect(g); g.connect(audio.destination);
+        o.start(audio.currentTime + t); o.stop(audio.currentTime + t + 0.25);
+      });
+    } catch (e) {}
+  }
+  function renderTimer() {
+    document.body.classList.toggle('timing', !!timer);
+    if (!timer) { timerEl.hidden = true; clearInterval(tick); tick = null; return; }
+    var left = Math.ceil((timer.end - Date.now()) / 1000);
+    timerEl.hidden = false;
+    tlabel.textContent = timer.label || 'Таймер';
+    if (left <= 0) {
+      if (!timer.done) {
+        timer.done = true; saveTimer();
+        beep();
+        try { if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]); } catch (e) {}
+      }
+      ttime.textContent = 'Время вышло';
+      tbox.classList.add('ring'); tbtn.textContent = 'Ок';
+    } else {
+      ttime.textContent = fmtTime(left);
+      tbox.classList.remove('ring'); tbtn.textContent = 'Стоп';
+    }
+  }
+  function startTimer(label, sec) {
+    ensureAudio();
+    timer = { label: label, end: Date.now() + sec * 1000, done: false }; saveTimer();
+    clearInterval(tick); renderTimer(); tick = setInterval(renderTimer, 250);
+  }
+  tbtn.addEventListener('click', function () { timer = null; saveTimer(); renderTimer(); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && timer) renderTimer(); });
+  if (timer) { tick = setInterval(renderTimer, 250); renderTimer(); }
+  function timerBtn(step) {
+    return h('button', { type: 'button', class: 'btn ghost small', onclick: function () { startTimer(step.label || 'Таймер', step.timer); } },
+      'Таймер ' + timerWord(step.timer));
   }
 
-  function viewHome() {
+  /* Экран не гаснет в режиме готовки */
+  var wake = null;
+  function wakeOn() {
+    try {
+      if (navigator.wakeLock && !wake) navigator.wakeLock.request('screen').then(function (l) {
+        wake = l; l.addEventListener('release', function () { wake = null; });
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  function wakeOff() { try { if (wake) { wake.release(); wake = null; } } catch (e) {} }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && route().cook) wakeOn(); });
+
+  /* Баллы */
+  function award(r) {
+    var now = Date.now();
+    var recent = S.cooked.some(function (c) { return c.id === r.id && now - c.t < 12 * 3600 * 1000; });
+    if (recent) return { dup: true };
+    S.cooked.push({ id: r.id, t: now });
+    S.earned += r.pts || 0; save();
+    return { ok: true, pts: r.pts || 0 };
+  }
+  function cookedCount(id) { return S.cooked.filter(function (c) { return c.id === id; }).length; }
+  function awardDialog(r) {
+    var res = award(r);
+    if (res.dup) dialog('Уже засчитано', h('p', null, 'Это блюдо уже засчитано сегодня. Приготовь что-нибудь другое или вернись позже.'));
+    else dialog('Приготовили!', h('p', null, '+' + res.pts + ' ' + plural(res.pts, PTS) + '. Всего у тебя ' + balance() + ' ' + plural(balance(), PTS) + '.'),
+      [{ text: 'Отлично' }]);
+    render();
+  }
+
+  function route() {
+    var hash = (location.hash || '').replace(/^#/, '');
+    if (hash.indexOf('r-') === 0) return { id: hash.slice(2) };
+    if (hash.indexOf('cook-') === 0) return { id: hash.slice(5), cook: true };
+    if (hash === 'gifts') return { id: null, gifts: true };
+    return { id: null };
+  }
+
+  /* Главная */
+  function pointsPanel() {
+    var bal = balance();
+    var sorted = GIFTS.slice().sort(function (a, b) { return a.cost - b.cost; });
+    var next = sorted.filter(function (g) { return g.cost > bal; })[0];
+    var line, bar = null;
+    if (sorted.length && sorted[0].cost <= bal) line = 'Уже хватает на подарок. Загляни в раздел «Подарки».';
+    else if (next) line = 'До подарка «' + next.title + '» ещё ' + (next.cost - bal) + ' ' + plural(next.cost - bal, PTS) + '.';
+    else line = 'Готовь, копи баллы и меняй их на подарки.';
+    if (next) bar = h('div', { class: 'progress', role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': next.cost, 'aria-valuenow': bal },
+      h('i', { style: 'width:' + Math.min(100, Math.round(bal / next.cost * 100)) + '%' }));
+    return h('section', { class: 'panel' },
+      h('h2', null, 'Мои баллы'),
+      h('div', { class: 'pts' }, h('span', { class: 'big' }, String(bal)), h('span', { class: 'muted' }, plural(bal, PTS))),
+      bar, h('p', { class: 'small muted' }, line),
+      h('p', { class: 'small muted' }, 'Приготовлено блюд: ' + S.cooked.length));
+  }
+  function giftsPanel() {
+    var bal = balance();
+    return h('section', { class: 'panel', id: 'gifts' },
+      h('h2', null, 'Подарки'),
+      h('p', { class: 'small muted' }, 'Подарок вручает взрослый. Баллы списываются, когда ты его получаешь.'),
+      GIFTS.map(function (g) {
+        var can = bal >= g.cost;
+        return h('div', { class: 'gift' },
+          h('div', { class: 'gt' }, h('div', null, g.title), h('div', { class: 'gc' }, g.cost + ' ' + plural(g.cost, PTS))),
+          h('button', { type: 'button', class: 'btn small', disabled: !can, onclick: function () { claimDialog(g); } },
+            can ? 'Получить' : 'Ещё ' + (g.cost - bal)));
+      }),
+      S.claimed.length ? h('p', { class: 'small muted' }, 'Получено подарков: ' + S.claimed.length) : null);
+  }
+  function claimDialog(g) {
+    dialog('Получить подарок?', h('p', null, '«' + g.title + '». Спишется ' + g.cost + ' ' + plural(g.cost, PTS) + '. Нажимай, когда рядом взрослый.'),
+      [{ text: 'Получить', fn: function () {
+          if (balance() < g.cost) return;
+          S.spent += g.cost; S.claimed.push({ id: g.id, t: Date.now() }); save();
+          toast('Подарок получен. Осталось ' + balance() + ' ' + plural(balance(), PTS));
+          render();
+        } }, { text: 'Отмена', ghost: true }]);
+  }
+
+  function viewHome(rt) {
     var groups = {}, order = [];
     BOOK.forEach(function (r) {
-      if (!groups[r.character]) { groups[r.character] = []; order.push(r.character); }
-      groups[r.character].push(r);
+      if (!groups[r.char]) { groups[r.char] = []; order.push(r.char); }
+      groups[r.char].push(r);
     });
     var out = [h('header', { class: 'hero' },
       h('div', { class: 'eyebrow' }, 'Семейная книга рецептов'),
       h('h1', null, 'Аниме-кухня'),
-      h('p', { class: 'sub' }, 'Любимые блюда любимых персонажей. Готовим вместе: сын выбирает героя, папа находит рецепт.'))];
-    order.forEach(function (name) {
-      var rs = groups[name];
+      h('p', { class: 'sub' }, 'Любимые блюда любимых персонажей. Готовим вместе: сын выбирает героя, папа находит рецепт.')),
+      pointsPanel()];
+    var cards = [];
+    if (BOOK.length >= 5) {
+      var q = h('input', { type: 'search', class: 'search', placeholder: 'Найти блюдо или героя', 'aria-label': 'Поиск' });
+      q.addEventListener('input', function () {
+        var s = q.value.trim().toLowerCase();
+        cards.forEach(function (c) { c.el.hidden = !!s && c.text.indexOf(s) < 0; });
+        document.querySelectorAll('.group').forEach(function (g) { g.hidden = !g.querySelector('.rcard:not([hidden])'); });
+      });
+      out.push(q);
+    }
+    order.forEach(function (key) {
+      var ch = CHARS[key] || { name: key, series: '' };
       out.push(h('section', { class: 'group' },
-        h('h2', null, name, rs[0].series ? h('span', { class: 'tag' }, rs[0].series) : null),
-        rs.map(function (r) {
-          return h('a', { class: 'rcard', href: '#r-' + r.id },
-            h('span', { class: 't' }, r.title),
-            h('span', { class: 'm' }, [r.time, r.servings].filter(Boolean).join(' · ')));
+        h('h2', null, ch.name, ch.series ? h('span', { class: 'tag' }, ch.series) : null),
+        groups[key].map(function (r) {
+          var cnt = cookedCount(r.id);
+          var meta = [r.time, '+' + (r.pts || 0) + ' ' + plural(r.pts || 0, PTS)];
+          if (cnt) meta.push('готовили: ' + cnt);
+          var el = h('a', { class: 'rcard', href: '#r-' + r.id },
+            h('span', { class: 'top' }, h('span', { class: 't' }, r.title), S.fav[r.id] ? svg(HEART.replace('<svg', '<svg class="heart"')) : null),
+            h('span', { class: 'm' }, meta.join(' · ')));
+          cards.push({ el: el, text: (r.title + ' ' + ch.name).toLowerCase() });
+          return el;
         })));
     });
+    out.push(giftsPanel());
     return out;
   }
 
-  function chk(key, text) {
+  /* Ингредиенты */
+  function servingsSeg(r) {
+    var cur = S.servings[r.id] == null ? 1 : S.servings[r.id];
+    return h('div', { class: 'seg', role: 'group', 'aria-label': 'Сколько порций' }, MULTS.map(function (m, i) {
+      return h('button', { type: 'button', 'aria-pressed': i === cur ? 'true' : 'false', onclick: function () { S.servings[r.id] = i; save(); render(); } }, servLabel(r, m));
+    }));
+  }
+  function ingList(r) {
+    var mult = curMult(r);
+    return h('ul', { class: 'checks' }, r.ingredients.map(function (ing, i) {
+      var key = r.id + ':i' + i;
+      var input = h('input', { type: 'checkbox', id: 'c-' + key });
+      input.checked = !!S.checks[key];
+      input.addEventListener('change', function () { S.checks[key] = input.checked; save(); });
+      return h('li', null, thumb(ing),
+        h('label', { class: 'chk', for: 'c-' + key }, input,
+          h('span', { class: 'ingtxt' }, h('span', null, ing.n), ing.note ? h('span', { class: 'note' }, ing.note) : null),
+          h('span', { class: 'amt' }, qtyText(ing, mult))));
+    }));
+  }
+  function stepCheck(key, text) {
     var input = h('input', { type: 'checkbox', id: 'c-' + key });
-    input.checked = !!checks[key];
+    input.checked = !!S.checks[key];
     input.addEventListener('change', function () {
-      checks[key] = input.checked; saveChecks();
-      var step = input.closest('.step'); if (step) step.classList.toggle('done', input.checked);
+      S.checks[key] = input.checked; save();
+      var st = input.closest('.step'); if (st) st.classList.toggle('done', input.checked);
     });
     return h('label', { class: 'chk', for: 'c-' + key }, input, h('span', null, text));
   }
 
-  /* Миниатюра ингредиента: если файла нет, остаётся пустая рамка. */
-  function thumb(ing) {
-    var btn = h('button', { type: 'button', class: 'thumb empty', 'aria-label': ing.n }, '');
-    var probe = new Image();
-    probe.onload = function () {
-      btn.className = 'thumb';
-      btn.append(h('img', { src: probe.src, alt: '', width: 56, height: 56 }));
-      btn.addEventListener('click', function () { openLb(ing.n, ing.k); });
-    };
-    probe.src = imgUrl(ing.k);
-    return btn;
-  }
-
-  function stepPhoto(s, i) {
-    var wrap = h('div', { class: 'photo' });
-    var probe = new Image();
-    probe.onload = function () { wrap.append(h('img', { src: probe.src, alt: 'Фото к шагу ' + (i + 1), loading: 'lazy' })); };
-    probe.src = imgUrl(s.k);
-    return wrap;
-  }
-
-  function viewRecipe(id) {
-    var r = BOOK.filter(function (x) { return x.id === id; })[0];
-    if (!r) return [h('a', { class: 'back', href: '#' }, '← К книге'), h('p', { class: 'notice' }, 'Такого рецепта нет.')];
-    var metas = [['Время', r.time], ['Порций', r.servings], ['Сложность', r.rank]].filter(function (m) { return m[1]; });
-    var out = [
+  function viewRecipe(r) {
+    var ch = CHARS[r.char] || { name: '' };
+    var favBtn = h('button', { type: 'button', class: 'icon-btn', 'aria-pressed': S.fav[r.id] ? 'true' : 'false', 'aria-label': 'В избранное',
+      onclick: function () { if (S.fav[r.id]) delete S.fav[r.id]; else S.fav[r.id] = true; save(); render(); } });
+    favBtn.innerHTML = HEART;
+    var metas = [['Время', r.time], ['Порций', servLabel(r)], ['Сложность', r.rank], ['Награда', '+' + (r.pts || 0) + ' ' + plural(r.pts || 0, PTS)]];
+    return [
       h('a', { class: 'back', href: '#' }, '← К книге'),
       h('div', { class: 'rhead' },
-        h('div', { class: 'who' }, r.character),
-        h('h1', null, r.title),
+        h('div', { class: 'who' }, ch.name),
+        h('div', { class: 'titlerow' }, h('h1', null, r.title), favBtn),
         h('div', { class: 'metas' }, metas.map(function (m) {
           return h('div', { class: 'meta' }, h('div', { class: 'k' }, m[0]), h('div', { class: 'v' }, m[1]));
         })),
-        r.intro ? h('p', { class: 'intro' }, r.intro) : null)
+        r.intro ? h('p', { class: 'intro' }, r.intro) : null),
+      h('a', { class: 'btn big', href: '#cook-' + r.id }, 'Готовим по шагам'),
+      h('section', { class: 'panel' }, h('h2', null, 'Сколько порций'), servingsSeg(r)),
+      h('section', { class: 'panel' }, h('h2', null, 'Что нужно'), ingList(r)),
+      h('h2', null, 'Как готовим'),
+      h('ol', { class: 'steps' }, r.steps.map(function (s, i) {
+        var key = r.id + ':s' + i;
+        return h('li', { class: 'step' + (S.checks[key] ? ' done' : '') },
+          h('div', { class: 'row' },
+            h('div', { class: 'n' }, String(i + 1)),
+            h('div', { class: 'txt' }, s.adult ? h('span', { class: 'badge' }, 'Нужен взрослый') : null, h('p', null, fill(s.t, r)))),
+          photoEl(s.k, 'Фото к шагу ' + (i + 1)),
+          s.timer ? h('div', null, timerBtn(s)) : null,
+          stepCheck(key, 'Шаг готов'));
+      })),
+      h('button', { type: 'button', class: 'btn big', onclick: function () { awardDialog(r); } }, 'Приготовили! +' + (r.pts || 0) + ' ' + plural(r.pts || 0, PTS))
     ];
-    out.push(h('section', { class: 'panel' }, h('h2', null, 'Что нужно'),
-      h('ul', { class: 'checks' }, r.ingredients.map(function (ing, i) {
-        return h('li', null, thumb(ing), chk(r.id + ':i' + i, ing.t));
-      }))));
-    out.push(h('h2', null, 'Как готовим'));
-    out.push(h('ol', { class: 'steps' }, r.steps.map(function (s, i) {
-      var key = r.id + ':s' + i;
-      return h('li', { class: 'step' + (checks[key] ? ' done' : '') },
-        h('div', { class: 'row' },
-          h('div', { class: 'n' }, String(i + 1)),
-          h('div', { class: 'txt' },
-            s.adult ? h('span', { class: 'badge' }, 'Нужен взрослый') : null,
-            h('p', null, s.t))),
-        stepPhoto(s, i),
-        chk(key, 'Шаг готов'));
-    })));
-    return out;
   }
 
-  function render() {
-    var r = route();
-    var nodes = r.id ? viewRecipe(r.id) : viewHome();
-    appEl.replaceChildren.apply(appEl, nodes);
+  /* Режим готовки: экран 0 это «что нужно», дальше шаги, последний экран «готово» */
+  var cook = { id: null, i: 0, result: null };
+  function viewCook(r) {
+    if (cook.id !== r.id) cook = { id: r.id, i: 0, result: null };
+    var total = r.steps.length + 2, i = Math.min(cook.i, total - 1);
+    var pct = Math.round(i / (total - 1) * 100);
+    var body = [], bar;
+    var top = h('div', { class: 'top' }, h('a', { class: 'back', href: '#r-' + r.id }, '× Выйти'), h('span', { class: 'count' }, r.title));
+    var prog = h('div', { class: 'progress', role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': total - 1, 'aria-valuenow': i }, h('i', { style: 'width:' + pct + '%' }));
+    var back = h('button', { type: 'button', class: 'btn ghost', disabled: i === 0, onclick: function () { go(-1); } }, 'Назад');
+    if (i === 0) {
+      body = [h('h2', null, 'Сначала собери всё нужное'), servingsSeg(r), h('section', { class: 'panel' }, ingList(r))];
+      bar = [back, h('button', { type: 'button', class: 'btn', onclick: function () { go(1); } }, 'Начать')];
+    } else if (i <= r.steps.length) {
+      var s = r.steps[i - 1];
+      body = [h('div', { class: 'count' }, 'Шаг ' + i + ' из ' + r.steps.length),
+        s.adult ? h('div', null, h('span', { class: 'badge' }, 'Нужен взрослый')) : null,
+        h('p', { class: 'stepText' }, fill(s.t, r)),
+        photoEl(s.k, 'Фото к шагу ' + i),
+        s.timer ? h('div', null, h('button', { type: 'button', class: 'btn big', onclick: function () { startTimer(s.label || 'Таймер', s.timer); } }, 'Таймер ' + timerWord(s.timer))) : null];
+      bar = [back, h('button', { type: 'button', class: 'btn', onclick: function () { go(1); } }, i === r.steps.length ? 'Готово' : 'Далее')];
+    } else {
+      var res = cook.result;
+      body = [h('div', { class: 'done-mark' }, 'Готово!'), h('p', { class: 'stepText' }, 'Всё приготовлено. Приятного аппетита!')];
+      if (!res) body.push(h('button', { type: 'button', class: 'btn big', onclick: function () { cook.result = award(r); render(); } },
+        'Приготовили! +' + (r.pts || 0) + ' ' + plural(r.pts || 0, PTS)));
+      else if (res.dup) body.push(h('p', { class: 'notice' }, 'Это блюдо уже засчитано сегодня. Баллы за него будут снова доступны через 12 часов.'));
+      else body.push(h('section', { class: 'panel' }, h('h2', null, '+' + res.pts + ' ' + plural(res.pts, PTS)),
+        h('p', null, 'Всего у тебя ' + balance() + ' ' + plural(balance(), PTS) + '.')));
+      bar = [back, h('a', { class: 'btn', href: '#' }, 'К книге')];
+    }
+    appEl.dataset.cookBar = '1';
+    var barEl = h('div', { class: 'cookbar', id: 'cookbar' }, h('div', { class: 'in' }, bar));
+    document.getElementById('cookbar-slot') && document.getElementById('cookbar-slot').remove();
+    var slot = h('div', { id: 'cookbar-slot' }, barEl); document.body.append(slot);
+    return [h('div', { class: 'cook' }, top, prog, body)];
   }
-  window.addEventListener('hashchange', function () { closeLb(); render(); window.scrollTo(0, 0); });
+  function go(d) {
+    var r = find(cook.id); if (!r) return;
+    cook.i = Math.max(0, Math.min(r.steps.length + 1, cook.i + d)); render(); window.scrollTo(0, 0);
+  }
+  /* Свайп в режиме готовки */
+  var sx = 0, sy = 0;
+  document.addEventListener('touchstart', function (e) { if (!route().cook) return; sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (!route().cook || !lbEl.hidden) return;
+    var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 70 && Math.abs(dy) < 50) go(dx < 0 ? 1 : -1);
+  }, { passive: true });
+
+  function render() {
+    var y = window.scrollY, rt = route();
+    var r = rt.id ? find(rt.id) : null;
+    var old = document.getElementById('cookbar-slot'); if (old) old.remove();
+    document.body.classList.toggle('cooking', !!(rt.cook && r));
+    if (r) document.documentElement.setAttribute('data-char', r.char); else document.documentElement.removeAttribute('data-char');
+    var nodes;
+    if (rt.id && !r) nodes = [h('a', { class: 'back', href: '#' }, '← К книге'), h('p', { class: 'notice' }, 'Такого рецепта нет.')];
+    else if (rt.cook) nodes = viewCook(r);
+    else if (rt.id) nodes = viewRecipe(r);
+    else nodes = viewHome(rt);
+    appEl.replaceChildren.apply(appEl, nodes);
+    if (rt.cook && r) wakeOn(); else wakeOff();
+    window.scrollTo(0, y);
+  }
+  window.addEventListener('hashchange', function () {
+    closeLb(); render();
+    var rt = route();
+    if (rt.gifts) { var g = document.getElementById('gifts'); if (g) g.scrollIntoView(); } else window.scrollTo(0, 0);
+  });
   render();
 
   if ('serviceWorker' in navigator) {

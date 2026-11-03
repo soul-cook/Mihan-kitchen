@@ -1,6 +1,6 @@
 /* Сначала сеть (в обход кэша браузера), при её отсутствии сохранённая копия.
    Так обновления книги приходят сразу, а без интернета открывается последняя загруженная версия. */
-var CACHE = 'anime-kitchen-v2';
+var CACHE = 'anime-kitchen-v3';
 
 self.addEventListener('install', function () { self.skipWaiting(); });
 self.addEventListener('activate', function (e) {
