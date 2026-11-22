@@ -12,8 +12,29 @@ window.CHARS = {
     name: 'Римуру Темпест', series: 'Перерождение в слизь',
     accent: '#0A7FA8', glow: '#BDEBFA', ink: '#FFFFFF',
     accentDk: '#6FD8F5', glowDk: '#0E3A4A', inkDk: '#06222B'
+  },
+  naruto: {
+    name: 'Наруто Удзумаки', series: 'Наруто',
+    accent: '#C94F00', glow: '#FFC999', ink: '#FFFFFF',
+    accentDk: '#FF9A4D', glowDk: '#4A2308', inkDk: '#2A1300'
   }
 };
+
+/* Оформления и рамки, открываются за баллы (cost). Порядок как в книге: Годжо, Римуру, Наруто.
+   Цены можно менять. cost: 0 значит открыто сразу. */
+window.THEMES = [
+  { id: 'tea', name: 'Чайная', desc: 'Бирюзовый и кремовый. Сама подстраивается под светлый и тёмный режим телефона.', cost: 0, swatch: ['#0F5550', '#FBF6EC', '#DCE9EA'] },
+  { id: 'gojo', name: 'Шесть глаз', desc: 'Тёмная ночь и синее свечение, как у Годжо.', cost: 30, mode: 'dark', swatch: ['#070A1A', '#2D6BFF', '#7CC4FF'] },
+  { id: 'rimuru', name: 'Слизь Римуру', desc: 'Нежный голубой и мягкие круглые формы.', cost: 60, mode: 'light', swatch: ['#E3F6FB', '#38BFE6', '#0A7FA8'] },
+  { id: 'naruto', name: 'Путь ниндзя', desc: 'Оранжевый и тёмно-синий, как наряд Наруто.', cost: 90, mode: 'light', swatch: ['#FFF3E6', '#FF8A2B', '#1D1A33'] }
+];
+window.FRAMES = [
+  { id: 'none', name: 'Простая', cost: 0 },
+  { id: 'gold', name: 'Золотая', cost: 20 },
+  { id: 'gojo', name: 'Шесть глаз', cost: 40 },
+  { id: 'rimuru', name: 'Слизь', cost: 70 },
+  { id: 'naruto', name: 'Вихрь', cost: 100 }
+];
 
 /* Подарки за баллы. Это примеры, заменить на настоящие. */
 window.GIFTS = [

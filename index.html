@@ -5,7 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Аниме-кухня</title>
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#2D6BFF">
+<meta name="theme-color" content="#DCE9EA">
+<script>
+/* Тема и светлый/тёмный режим ставятся сразу, чтобы страница не мигала */
+(function () {
+  try {
+    var st = JSON.parse(localStorage.getItem('ak-state-v2') || '{}'), t = st.theme || 'tea';
+    var fixed = { gojo: 'dark', rimuru: 'light', naruto: 'light' };
+    var d = document.documentElement;
+    d.dataset.theme = t;
+    d.dataset.mode = fixed[t] || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  } catch (e) {}
+})();
+</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Аниме-кухня">
@@ -20,15 +32,39 @@
   color-scheme: light;
   --font-display: 'Unbounded', system-ui, sans-serif;
   --font-body: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --bg: #F2F6FC; --surface: #FFFFFF; --fg: #0E1430; --muted: #55608A; --line: #D6DFF0;
-  --accent: #2D6BFF; --accent-ink: #FFFFFF; --glow: #BFD8FF; --warn: #7A4300; --warn-bg: #FFE9C7; --heart: #D93A5F;
+  --bg: #DCE9EA; --surface: #FBF6EC; --fg: #16302F; --muted: #4D6764; --line: #C2D5D2;
+  --accent: #0F5550; --accent-ink: #FBF6EC; --glow: #BFDDD8; --warm: #E3A04B;
+  --warn: #7A4300; --warn-bg: #FFE9C7; --heart: #D93A5F; --r: 18px;
+  --hero-bg: radial-gradient(70% 140% at 85% 0%, var(--glow), transparent 70%), var(--surface);
+  --hero-fg: var(--fg); --hero-muted: var(--muted);
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --bg: #080B1C; --surface: #10152F; --fg: #E8EEFF; --muted: #9AA6D0; --line: #222B52;
-    --accent: #7CC4FF; --accent-ink: #06122B; --glow: #17306B; --warn: #FFD28A; --warn-bg: #3A2A0A; --heart: #FF7A97;
-  }
+:root[data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #0A1B1B; --surface: #102726; --fg: #E7F2EE; --muted: #93B1AC; --line: #1D3937;
+  --accent: #5BC9B8; --accent-ink: #04201C; --glow: #134541; --warm: #E3A04B;
+  --warn: #FFD28A; --warn-bg: #3A2A0A; --heart: #FF7A97;
+}
+/* Оформления, открываемые за баллы */
+:root[data-theme="gojo"] {
+  color-scheme: dark;
+  --bg: #070A1A; --surface: #0E1330; --fg: #EAF0FF; --muted: #9DAAD6; --line: #1F2A5C;
+  --accent: #7CC4FF; --accent-ink: #06122B; --glow: #1B3A9A; --warm: #BFE3FF;
+  --warn: #FFD28A; --warn-bg: #3A2A0A; --heart: #FF7A97;
+  --hero-bg: radial-gradient(90% 160% at 100% 0%, #2D6BFF88, transparent 65%), linear-gradient(135deg, #0E1330, #16286B);
+}
+:root[data-theme="rimuru"] {
+  color-scheme: light; --r: 28px;
+  --bg: #E3F6FB; --surface: #FFFFFF; --fg: #0B3442; --muted: #476B78; --line: #BCE3EF;
+  --accent: #0A7FA8; --accent-ink: #FFFFFF; --glow: #B6EAF7; --warm: #5FD0EE;
+  --warn: #7A4300; --warn-bg: #FFE9C7; --heart: #D93A5F;
+  --hero-bg: linear-gradient(160deg, #BDEBFA, #EAF9FD 70%);
+}
+:root[data-theme="naruto"] {
+  color-scheme: light;
+  --bg: #FFF3E6; --surface: #FFFFFF; --fg: #1D1A33; --muted: #675F82; --line: #F1D6BA;
+  --accent: #C94F00; --accent-ink: #FFFFFF; --glow: #FFC999; --warm: #FF8A2B;
+  --warn: #7A4300; --warn-bg: #FFE9C7; --heart: #D93A5F;
+  --hero-bg: linear-gradient(135deg, #FF8A2B, #FFB863); --hero-fg: #2A1300; --hero-muted: #5A2E0A;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -50,13 +86,24 @@ a { color: var(--accent); }
 img { max-width: 100%; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-.hero { border-radius: 20px; padding: 28px 20px 24px; border: 1px solid var(--line);
-  background: radial-gradient(70% 140% at 85% 0%, var(--glow), transparent 70%), var(--surface); }
-.hero .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.hero { border-radius: calc(var(--r) + 2px); padding: 24px 20px; border: 1px solid var(--line); background: var(--hero-bg); color: var(--hero-fg);
+  display: flex; gap: 14px; align-items: center; justify-content: space-between; }
+.hero .htxt { min-width: 0; }
+.hero .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--hero-muted); margin-bottom: 10px; }
 .hero h1 { font-size: 28px; }
-.hero p.sub { margin-top: 10px; color: var(--muted); max-width: 46ch; }
+.hero p.sub { margin-top: 10px; color: var(--hero-muted); max-width: 46ch; }
+.avatar { --ring: var(--line); --s: 72px; width: var(--s); height: var(--s); border-radius: 50%; padding: 4px; background: var(--ring); flex: none; display: block; text-decoration: none; }
+.avatar .in { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: var(--glow); color: var(--accent); display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 700; font-size: calc(var(--s) * .4); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar.lg { --s: 120px; }
+.avatar.sm { --s: 52px; }
+.fr-gold { --ring: conic-gradient(#F6D06F, #B8862B, #FFF0B0, #B8862B, #F6D06F); }
+.fr-gojo { --ring: linear-gradient(135deg, #7CC4FF, #2D6BFF, #EAF6FF); box-shadow: 0 0 14px #2D6BFF88; }
+.fr-rimuru { --ring: linear-gradient(160deg, #BDEBFA, #38BFE6, #DFF7FF); box-shadow: 0 0 12px #38BFE688; }
+.fr-naruto { --ring: conic-gradient(#FF8A2B, #FFD08A, #E8630A, #1D1A33, #FF8A2B); }
 
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .panel h2 { font-size: 17px; }
 .muted { color: var(--muted); }
 .small { font-size: 14px; }
@@ -64,14 +111,14 @@ img { max-width: 100%; }
 .pts { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .pts .big { font-family: var(--font-display); font-weight: 700; font-size: 36px; font-variant-numeric: tabular-nums; line-height: 1; }
 .progress { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
-.progress i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+.progress i { display: block; height: 100%; background: var(--warm, var(--accent)); border-radius: 4px; }
 
 .search { font: inherit; color: var(--fg); background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; width: 100%; min-width: 0; }
 .group { display: flex; flex-direction: column; gap: 10px; }
 .group h2 { font-size: 15px; letter-spacing: .02em; }
 .group .tag { color: var(--muted); font-family: var(--font-body); font-weight: 500; font-size: 13px; margin-left: 6px; }
 .rcard { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--fg);
-  background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+  background: var(--surface); border: 1px solid var(--line); border-radius: calc(var(--r) - 2px); padding: 16px; }
 .rcard:active { border-color: var(--accent); }
 .rcard .top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
 .rcard .t { font-family: var(--font-display); font-weight: 500; font-size: 17px; line-height: 1.25; }
@@ -118,7 +165,7 @@ img { max-width: 100%; }
 .thumb.empty { border: 1.5px dashed var(--line); background: transparent; cursor: default; }
 
 .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
-.step { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .step .row { display: flex; gap: 12px; align-items: flex-start; }
 .step .n { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
   font-family: var(--font-display); font-weight: 700; font-size: 14px; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
@@ -167,6 +214,27 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 #lb .acts .btn { flex: 1; }
 #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(96px + env(safe-area-inset-bottom, 0px));
   background: var(--fg); color: var(--bg); padding: 12px 16px; border-radius: 12px; font-size: 14px; max-width: calc(100% - 32px); z-index: 40; }
+.group .sub2 { font-size: 13px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-top: 4px; }
+.rcard .who2 { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+:root[data-theme="gojo"] .btn:not(.ghost) { box-shadow: 0 0 18px var(--glow); }
+:root[data-theme="naruto"] .rcard { border-left: 5px solid var(--accent); }
+:root[data-theme="naruto"] .step .n { border-radius: 8px; }
+:root[data-theme="rimuru"] .btn, :root[data-theme="rimuru"] .meta { border-radius: 999px; }
+:root[data-theme="rimuru"] .meta { border-radius: 20px; }
+
+/* Профиль */
+.prof { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.prof .acts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.nameIn { font: inherit; font-weight: 600; text-align: center; color: var(--fg); background: var(--bg); border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; width: min(280px, 100%); min-width: 0; }
+.rew { display: flex; gap: 12px; align-items: center; border-top: 1px solid var(--line); padding-top: 12px; }
+.rew:first-of-type { border-top: 0; padding-top: 0; }
+.rew .rt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.rew .rt b { display: block; }
+.rew .rd { font-size: 13px; color: var(--muted); }
+.sw3 { display: flex; flex: none; }
+.sw3 i { width: 18px; height: 40px; display: block; }
+.sw3 i:first-child { border-radius: 8px 0 0 8px; } .sw3 i:last-child { border-radius: 0 8px 8px 0; }
+.rew .btn { flex: none; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -184,10 +252,10 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 <script src="data.js"></script>
 <script>
 (function () {
-  var BOOK = window.BOOK || [], CHARS = window.CHARS || {}, GIFTS = window.GIFTS || [];
+  var BOOK = window.BOOK || [], CHARS = window.CHARS || {}, GIFTS = window.GIFTS || [], THEMES = window.THEMES || [], FRAMES = window.FRAMES || [];
   var MULTS = [0.5, 1, 2];
   var KEY = 'ak-state-v2', TKEY = 'ak-timer';
-  var S = { checks: {}, servings: {}, fav: {}, cooked: [], earned: 0, spent: 0, claimed: [] };
+  var S = { checks: {}, servings: {}, fav: {}, cooked: [], earned: 0, spent: 0, claimed: [], name: '', avatar: '', theme: 'tea', frame: 'none', own: {} };
   try {
     var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (raw && typeof raw === 'object') Object.keys(S).forEach(function (k) { if (raw[k] != null) S[k] = raw[k]; });
@@ -205,8 +273,8 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
   var css = '';
   Object.keys(CHARS).forEach(function (k) {
     var c = CHARS[k];
-    css += '[data-char="' + k + '"]{--accent:' + c.accent + ';--glow:' + c.glow + ';--accent-ink:' + (c.ink || '#fff') + '}';
-    css += '@media (prefers-color-scheme: dark){[data-char="' + k + '"]{--accent:' + (c.accentDk || c.accent) + ';--glow:' + (c.glowDk || c.glow) + ';--accent-ink:' + (c.inkDk || c.ink || '#fff') + '}}';
+    css += ':root[data-char="' + k + '"]{--accent:' + c.accent + ';--glow:' + c.glow + ';--accent-ink:' + (c.ink || '#fff') + '}';
+    css += ':root[data-mode="dark"][data-char="' + k + '"]{--accent:' + (c.accentDk || c.accent) + ';--glow:' + (c.glowDk || c.glow) + ';--accent-ink:' + (c.inkDk || c.ink || '#fff') + '}';
   });
   var styleEl = document.createElement('style'); styleEl.textContent = css; document.head.append(styleEl);
 
@@ -413,7 +481,100 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
     if (hash.indexOf('r-') === 0) return { id: hash.slice(2) };
     if (hash.indexOf('cook-') === 0) return { id: hash.slice(5), cook: true };
     if (hash === 'gifts') return { id: null, gifts: true };
+    if (hash === 'profile') return { id: null, profile: true };
     return { id: null };
+  }
+
+  /* Оформление */
+  var mq = window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null;
+  function themeById(id) { return THEMES.filter(function (t) { return t.id === id; })[0]; }
+  function frameById(id) { return FRAMES.filter(function (f) { return f.id === id; })[0]; }
+  function owned(kind, item) { return !item.cost || !!S.own[kind + ':' + item.id]; }
+  function applyTheme() {
+    var t = themeById(S.theme);
+    if (!t || !owned('theme', t)) { t = THEMES[0]; S.theme = t ? t.id : 'tea'; }
+    var d = document.documentElement;
+    d.dataset.theme = S.theme;
+    d.dataset.mode = t && t.mode ? t.mode : (mq && mq.matches ? 'dark' : 'light');
+    var bg = getComputedStyle(d).getPropertyValue('--bg').trim();
+    var m = document.querySelector('meta[name="theme-color"]'); if (m && bg) m.setAttribute('content', bg);
+  }
+  if (mq && mq.addEventListener) mq.addEventListener('change', applyTheme);
+
+  function avatarEl(size) {
+    var fr = frameById(S.frame);
+    var inner = S.avatar ? h('img', { src: S.avatar, alt: '' }) : (S.name ? S.name.trim().charAt(0).toUpperCase() : '☺');
+    return h('span', { class: 'avatar ' + (size || '') + (fr && fr.id !== 'none' && owned('frame', fr) ? ' fr-' + fr.id : '') }, h('span', { class: 'in' }, inner));
+  }
+  function readAvatar(file, done) {
+    var fr = new FileReader();
+    fr.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        var n = 256, c = document.createElement('canvas'); c.width = n; c.height = n;
+        var side = Math.min(im.width, im.height), sx = (im.width - side) / 2, sy = (im.height - side) / 2;
+        c.getContext('2d').drawImage(im, sx, sy, side, side, 0, 0, n, n);
+        done(c.toDataURL('image/jpeg', 0.82));
+      };
+      im.onerror = function () { toast('Не получилось открыть картинку'); };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  }
+  function unlock(kind, item) {
+    dialog('Открыть «' + item.name + '»?', h('p', null, 'Спишется ' + item.cost + ' ' + plural(item.cost, PTS) + '. Откроется навсегда.'),
+      [{ text: 'Открыть', fn: function () {
+          if (balance() < item.cost) return;
+          S.spent += item.cost; S.own[kind + ':' + item.id] = true;
+          if (kind === 'theme') S.theme = item.id; else S.frame = item.id;
+          save(); applyTheme(); toast('Открыто: ' + item.name); render();
+        } }, { text: 'Отмена', ghost: true }]);
+  }
+  function rewardRow(kind, item, cur, preview) {
+    var has = owned(kind, item), bal = balance(), btn;
+    if (cur === item.id) btn = h('button', { type: 'button', class: 'btn small ghost', disabled: true }, 'Выбрано');
+    else if (has) btn = h('button', { type: 'button', class: 'btn small', onclick: function () {
+      if (kind === 'theme') S.theme = item.id; else S.frame = item.id; save(); applyTheme(); render(); } }, 'Включить');
+    else btn = h('button', { type: 'button', class: 'btn small', disabled: bal < item.cost, onclick: function () { unlock(kind, item); } },
+      bal < item.cost ? 'Ещё ' + (item.cost - bal) : 'Открыть за ' + item.cost);
+    return h('div', { class: 'rew' }, preview,
+      h('div', { class: 'rt' }, h('b', null, item.name), item.desc ? h('span', { class: 'rd' }, item.desc) : null,
+        has ? null : h('span', { class: 'rd' }, item.cost + ' ' + plural(item.cost, PTS))), btn);
+  }
+  function viewProfile() {
+    var file = h('input', { type: 'file', accept: 'image/*', hidden: true });
+    file.addEventListener('change', function () {
+      if (file.files && file.files[0]) readAvatar(file.files[0], function (url) { S.avatar = url; save(); render(); });
+    });
+    var nameIn = h('input', { type: 'text', class: 'nameIn', placeholder: 'Как тебя зовут?', maxlength: 24, value: S.name || '', 'aria-label': 'Имя' });
+    nameIn.addEventListener('change', function () { S.name = nameIn.value.trim(); save(); render(); });
+    var bal = balance();
+    return [
+      h('a', { class: 'back', href: '#' }, '← К книге'),
+      h('section', { class: 'panel prof' }, avatarEl('lg'), nameIn,
+        h('div', { class: 'acts' },
+          h('button', { type: 'button', class: 'btn small', onclick: function () { file.click(); } }, S.avatar ? 'Другое фото' : 'Добавить фото'),
+          S.avatar ? h('button', { type: 'button', class: 'btn small ghost', onclick: function () { S.avatar = ''; save(); render(); } }, 'Убрать') : null),
+        file,
+        h('p', { class: 'small muted' }, 'У тебя ' + bal + ' ' + plural(bal, PTS) + '. Фото хранится только на этом телефоне.')),
+      h('section', { class: 'panel' }, h('h2', null, 'Оформление'),
+        h('p', { class: 'small muted' }, 'Новые наряды для книги. Открываются за баллы, потом можно переключаться когда угодно.'),
+        THEMES.map(function (t) {
+          return rewardRow('theme', t, S.theme, h('span', { class: 'sw3', 'aria-hidden': 'true' }, (t.swatch || []).map(function (c) { return h('i', { style: 'background:' + c }); })));
+        })),
+      h('section', { class: 'panel' }, h('h2', null, 'Рамки для фото'),
+        FRAMES.map(function (f) {
+          var prev = h('span', { class: 'avatar sm' + (f.id !== 'none' ? ' fr-' + f.id : '') }, h('span', { class: 'in' }, '☺'));
+          return rewardRow('frame', f, S.frame, prev);
+        }))
+    ];
+  }
+  function nextReward() {
+    var bal = balance(), best = null;
+    THEMES.forEach(function (t) { if (!owned('theme', t) && (!best || t.cost < best.cost)) best = { cost: t.cost, name: 'оформление «' + t.name + '»' }; });
+    FRAMES.forEach(function (f) { if (!owned('frame', f) && (!best || f.cost < best.cost)) best = { cost: f.cost, name: 'рамка «' + f.name + '»' }; });
+    if (!best) return null;
+    return best.cost <= bal ? 'Уже хватает на ' + best.name + '. Загляни в профиль.' : 'До награды: ' + best.name + ', ещё ' + (best.cost - bal) + ' ' + plural(best.cost - bal, PTS) + '.';
   }
 
   /* Главная */
@@ -431,7 +592,9 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
       h('h2', null, 'Мои баллы'),
       h('div', { class: 'pts' }, h('span', { class: 'big' }, String(bal)), h('span', { class: 'muted' }, plural(bal, PTS))),
       bar, h('p', { class: 'small muted' }, line),
-      h('p', { class: 'small muted' }, 'Приготовлено блюд: ' + S.cooked.length));
+      nextReward() ? h('p', { class: 'small muted' }, nextReward()) : null,
+      h('p', { class: 'small muted' }, 'Приготовлено блюд: ' + S.cooked.length),
+      h('a', { class: 'btn small ghost', href: '#profile' }, 'Профиль, оформление и рамки'));
   }
   function giftsPanel() {
     var bal = balance();
@@ -460,13 +623,16 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
   function viewHome(rt) {
     var groups = {}, order = [];
     BOOK.forEach(function (r) {
-      if (!groups[r.char]) { groups[r.char] = []; order.push(r.char); }
-      groups[r.char].push(r);
+      var sk = (CHARS[r.char] && CHARS[r.char].series) || r.char;
+      if (!groups[sk]) { groups[sk] = []; order.push(sk); }
+      groups[sk].push(r);
     });
     var out = [h('header', { class: 'hero' },
-      h('div', { class: 'eyebrow' }, 'Семейная книга рецептов'),
-      h('h1', null, 'Аниме-кухня'),
-      h('p', { class: 'sub' }, 'Любимые блюда любимых персонажей. Готовим вместе: сын выбирает героя, папа находит рецепт.')),
+      h('div', { class: 'htxt' },
+        h('div', { class: 'eyebrow' }, 'Семейная книга рецептов'),
+        h('h1', null, 'Аниме-кухня'),
+        h('p', { class: 'sub' }, S.name ? 'Привет, ' + S.name + '! Что приготовим сегодня?' : 'Любимые блюда любимых персонажей. Готовим вместе.')),
+      h('a', { class: 'avatar-link', href: '#profile', 'aria-label': 'Мой профиль' }, avatarEl())),
       pointsPanel()];
     var cards = [];
     if (BOOK.length >= 5) {
@@ -479,19 +645,26 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
       out.push(q);
     }
     order.forEach(function (key) {
-      var ch = CHARS[key] || { name: key, series: '' };
-      out.push(h('section', { class: 'group' },
-        h('h2', null, ch.name, ch.series ? h('span', { class: 'tag' }, ch.series) : null),
-        groups[key].map(function (r) {
+      var list = groups[key], chars = [];
+      list.forEach(function (r) { if (chars.indexOf(r.char) < 0) chars.push(r.char); });
+      var single = list.length === 1;           /* одно блюдо в аниме: без группы */
+      var items = [];
+      chars.forEach(function (ck) {
+        var ch = CHARS[ck] || { name: ck };
+        if (chars.length > 1) items.push(h('div', { class: 'sub2' }, ch.name));
+        list.filter(function (r) { return r.char === ck; }).forEach(function (r) {
           var cnt = cookedCount(r.id);
           var meta = [r.time, '+' + (r.pts || 0) + ' ' + plural(r.pts || 0, PTS)];
           if (cnt) meta.push('готовили: ' + cnt);
           var el = h('a', { class: 'rcard', href: '#r-' + r.id },
+            single || chars.length === 1 ? h('span', { class: 'who2' }, single ? key + ' · ' + ch.name : ch.name) : null,
             h('span', { class: 'top' }, h('span', { class: 't' }, r.title), S.fav[r.id] ? svg(HEART.replace('<svg', '<svg class="heart"')) : null),
             h('span', { class: 'm' }, meta.join(' · ')));
-          cards.push({ el: el, text: (r.title + ' ' + ch.name).toLowerCase() });
-          return el;
-        })));
+          cards.push({ el: el, text: (r.title + ' ' + ch.name + ' ' + key).toLowerCase() });
+          items.push(el);
+        });
+      });
+      out.push(h('section', { class: 'group' }, single ? null : h('h2', null, key), items));
     });
     out.push(giftsPanel());
     return out;
@@ -612,12 +785,14 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 
   function render() {
     var y = window.scrollY, rt = route();
+    applyTheme();
     var r = rt.id ? find(rt.id) : null;
     var old = document.getElementById('cookbar-slot'); if (old) old.remove();
     document.body.classList.toggle('cooking', !!(rt.cook && r));
     if (r) document.documentElement.setAttribute('data-char', r.char); else document.documentElement.removeAttribute('data-char');
     var nodes;
     if (rt.id && !r) nodes = [h('a', { class: 'back', href: '#' }, '← К книге'), h('p', { class: 'notice' }, 'Такого рецепта нет.')];
+    else if (rt.profile) nodes = viewProfile();
     else if (rt.cook) nodes = viewCook(r);
     else if (rt.id) nodes = viewRecipe(r);
     else nodes = viewHome(rt);
