@@ -32,17 +32,24 @@
   color-scheme: light;
   --font-display: 'Unbounded', system-ui, sans-serif;
   --font-body: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --bg: #DCE9EA; --surface: #FBF6EC; --fg: #16302F; --muted: #4D6764; --line: #C2D5D2;
+  --bg: #E3EBDF; --surface: #FBF6EC; --fg: #16302F; --muted: #4D6764; --line: #CCD8C6;
   --accent: #0F5550; --accent-ink: #FBF6EC; --glow: #BFDDD8; --warm: #E3A04B;
   --warn: #7A4300; --warn-bg: #FFE9C7; --heart: #D93A5F; --r: 18px;
   --hero-bg: radial-gradient(70% 140% at 85% 0%, var(--glow), transparent 70%), var(--surface);
   --hero-fg: var(--fg); --hero-muted: var(--muted);
+  --btn: #B4532A; --btn-ink: #FFF8EE; --num: #E3A04B; --num-ink: #2E1C04;
+  --tint1: #FFF0D4; --tint2: #EAF3E2; --tint3: #FCE6DA;
+  --b1: #F4C97E; --b2: #A9CFA8; --b3: #EFB093; --leaf: rgba(86, 128, 70, .42);
 }
+:root[data-theme="tea"] { --hero-bg: radial-gradient(80% 160% at 100% 0%, var(--tint1), transparent 70%), linear-gradient(135deg, var(--tint2), var(--surface)); }
 :root[data-mode="dark"] {
   color-scheme: dark;
   --bg: #0A1B1B; --surface: #102726; --fg: #E7F2EE; --muted: #93B1AC; --line: #1D3937;
   --accent: #5BC9B8; --accent-ink: #04201C; --glow: #134541; --warm: #E3A04B;
   --warn: #FFD28A; --warn-bg: #3A2A0A; --heart: #FF7A97;
+  --btn: #E48A5A; --btn-ink: #2A1206; --num: #E3A04B; --num-ink: #2E1C04;
+  --tint1: #2B2411; --tint2: #14301F; --tint3: #33201A;
+  --b1: #6B4C14; --b2: #14604F; --b3: #6B321C; --leaf: rgba(150, 190, 120, .3);
 }
 /* Оформления, открываемые за баллы */
 :root[data-theme="gojo"] {
@@ -51,6 +58,9 @@
   --accent: #7CC4FF; --accent-ink: #06122B; --glow: #1B3A9A; --warm: #BFE3FF;
   --warn: #FFD28A; --warn-bg: #3A2A0A; --heart: #FF7A97;
   --hero-bg: radial-gradient(90% 160% at 100% 0%, #2D6BFF88, transparent 65%), linear-gradient(135deg, #0E1330, #16286B);
+  --btn: #7CC4FF; --btn-ink: #06122B; --num: #BFE3FF; --num-ink: #06122B;
+  --tint1: #131B4A; --tint2: #0F1E48; --tint3: #1A1648;
+  --b1: #1F3FA8; --b2: #0F6A9A; --b3: #4A2AA0; --leaf: transparent;
 }
 :root[data-theme="rimuru"] {
   color-scheme: light; --r: 28px;
@@ -58,6 +68,9 @@
   --accent: #0A7FA8; --accent-ink: #FFFFFF; --glow: #B6EAF7; --warm: #5FD0EE;
   --warn: #7A4300; --warn-bg: #FFE9C7; --heart: #D93A5F;
   --hero-bg: linear-gradient(160deg, #BDEBFA, #EAF9FD 70%);
+  --btn: #0A7FA8; --btn-ink: #FFFFFF; --num: #5FD0EE; --num-ink: #06323F;
+  --tint1: #E4F7FD; --tint2: #E8FAF2; --tint3: #EAF1FF;
+  --b1: #9EE3F5; --b2: #B9F0D8; --b3: #C7D8FF; --leaf: transparent;
 }
 :root[data-theme="naruto"] {
   color-scheme: light;
@@ -65,6 +78,9 @@
   --accent: #C94F00; --accent-ink: #FFFFFF; --glow: #FFC999; --warm: #FF8A2B;
   --warn: #7A4300; --warn-bg: #FFE9C7; --heart: #D93A5F;
   --hero-bg: linear-gradient(135deg, #FF8A2B, #FFB863); --hero-fg: #2A1300; --hero-muted: #5A2E0A;
+  --btn: #C94F00; --btn-ink: #FFFFFF; --num: #FF8A2B; --num-ink: #2A1300;
+  --tint1: #FFEDD6; --tint2: #FFF6E4; --tint3: #FFE6DA;
+  --b1: #FFC48A; --b2: #FFE08A; --b3: #FFB59A; --leaf: transparent;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -113,7 +129,7 @@ img { max-width: 100%; }
 .progress { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
 .progress i { display: block; height: 100%; background: var(--warm, var(--accent)); border-radius: 4px; }
 
-.search { font: inherit; color: var(--fg); background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; width: 100%; min-width: 0; }
+.search { font: inherit; box-shadow: 0 1px 0 var(--line); color: var(--fg); background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; width: 100%; min-width: 0; }
 .group { display: flex; flex-direction: column; gap: 10px; }
 .group h2 { font-size: 15px; letter-spacing: .02em; }
 .group .tag { color: var(--muted); font-family: var(--font-body); font-weight: 500; font-size: 13px; margin-left: 6px; }
@@ -126,7 +142,7 @@ img { max-width: 100%; }
 .heart { flex: none; width: 20px; height: 20px; color: var(--heart); }
 
 .btn { appearance: none; border: 0; cursor: pointer; font: inherit; font-weight: 600; text-align: center; text-decoration: none;
-  background: var(--accent); color: var(--accent-ink); border-radius: 14px; padding: 12px 18px; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; }
+  background: var(--btn); color: var(--btn-ink); border-radius: 14px; padding: 12px 18px; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; }
 .btn.ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
 .btn.big { min-height: 56px; font-size: 18px; width: 100%; }
 .btn.small { min-height: 40px; padding: 8px 14px; font-size: 14px; border-radius: 12px; }
@@ -148,7 +164,7 @@ img { max-width: 100%; }
 
 .seg { display: flex; gap: 6px; }
 .seg button { flex: 1; min-width: 0; min-height: 44px; border: 1.5px solid var(--line); background: transparent; color: var(--fg); border-radius: 12px; font: inherit; font-weight: 600; cursor: pointer; padding: 6px 4px; }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.seg button[aria-pressed="true"] { background: var(--btn); color: var(--btn-ink); border-color: var(--btn); }
 
 .checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .checks li { border-top: 1px solid var(--line); display: flex; gap: 12px; align-items: center; padding: 8px 0; }
@@ -167,7 +183,7 @@ img { max-width: 100%; }
 .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
 .step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .step .row { display: flex; gap: 12px; align-items: flex-start; }
-.step .n { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+.step .n { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--num); color: var(--num-ink);
   font-family: var(--font-display); font-weight: 700; font-size: 14px; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
 .step .txt { min-width: 0; overflow-wrap: anywhere; }
 .step.done .txt { color: var(--muted); }
@@ -235,10 +251,51 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .sw3 i { width: 18px; height: 40px; display: block; }
 .sw3 i:first-child { border-radius: 8px 0 0 8px; } .sw3 i:last-child { border-radius: 0 8px 8px 0; }
 .rew .btn { flex: none; }
+/* Живой фон: медленные цветные пятна и редкие листья. Всё это только за карточками */
+#bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+#bg .blob { position: absolute; width: 80vmax; height: 80vmax; border-radius: 50%; will-change: transform; opacity: .75;
+  background: radial-gradient(closest-side, var(--c), transparent); }
+#bg .a { --c: var(--b1); left: -30vmax; top: -25vmax; animation: driftA 48s ease-in-out infinite alternate; }
+#bg .b { --c: var(--b2); right: -35vmax; top: 20vh; animation: driftB 60s ease-in-out infinite alternate; }
+#bg .c { --c: var(--b3); left: -5vmax; bottom: -40vmax; animation: driftC 54s ease-in-out infinite alternate; }
+@keyframes driftA { to { transform: translate3d(22vmax, 14vmax, 0) scale(1.15); } }
+@keyframes driftB { to { transform: translate3d(-24vmax, -10vmax, 0) scale(.9); } }
+@keyframes driftC { to { transform: translate3d(18vmax, -16vmax, 0) scale(1.2); } }
+#bg .leaf { position: absolute; top: 0; left: var(--x); width: var(--s); height: var(--s); color: var(--leaf); opacity: 0; will-change: transform;
+  animation: fall var(--d) linear infinite; animation-delay: var(--dl); }
+@keyframes fall {
+  0% { transform: translate3d(0, -12vh, 0) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; } 92% { opacity: 1; }
+  100% { transform: translate3d(-14vw, 112vh, 0) rotate(260deg); opacity: 0; }
+}
+body.cooking #bg { opacity: .45; }
+
+/* Всё, что пишется, лежит на плашках, а не прямо на фоне */
+.back, .group h2, #app > h2, .group .sub2, .rhead .who, .cook .count {
+  background: var(--surface); padding: 6px 14px; border-radius: 999px; width: fit-content; border: 1px solid var(--line); }
+.cook .top .back { padding-block: 0; }
+.titlerow { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; }
+.intro { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 16px; }
+.cook .stepText, .cook h2, .cook .done-mark { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; }
+.cook .top { align-items: center; }
+.t1 { background: var(--tint1) !important; } .t2 { background: var(--tint2) !important; } .t3 { background: var(--tint3) !important; }
+.meta:nth-child(odd) { background: var(--tint1); } .meta:nth-child(even) { background: var(--tint2); }
+.group.g0 .rcard { border-left: 6px solid var(--num); }
+.group.g1 .rcard { border-left: 6px solid var(--accent); }
+.group.g2 .rcard { border-left: 6px solid var(--btn); }
+.group.g0 h2 { border-color: var(--num); } .group.g1 h2 { border-color: var(--accent); } .group.g2 h2 { border-color: var(--btn); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
 <body>
+<div id="bg" aria-hidden="true">
+  <i class="blob a"></i><i class="blob b"></i><i class="blob c"></i>
+  <svg class="leaf" style="--x:8%;--s:34px;--d:62s;--dl:-8s" viewBox="0 0 24 24"><path fill="currentColor" d="M20 3C9 3 4 9 4 15c0 2 .8 3.7 2 5 .3-4 3-8 8-10-4 3-6 6-6.500 10.500C17 20 20 13 20 3z"/></svg>
+  <svg class="leaf" style="--x:28%;--s:22px;--d:78s;--dl:-40s" viewBox="0 0 24 24"><path fill="currentColor" d="M20 3C9 3 4 9 4 15c0 2 .8 3.7 2 5 .3-4 3-8 8-10-4 3-6 6-6.500 10.500C17 20 20 13 20 3z"/></svg>
+  <svg class="leaf" style="--x:52%;--s:40px;--d:70s;--dl:-22s" viewBox="0 0 24 24"><path fill="currentColor" d="M20 3C9 3 4 9 4 15c0 2 .8 3.7 2 5 .3-4 3-8 8-10-4 3-6 6-6.500 10.500C17 20 20 13 20 3z"/></svg>
+  <svg class="leaf" style="--x:74%;--s:26px;--d:84s;--dl:-55s" viewBox="0 0 24 24"><path fill="currentColor" d="M20 3C9 3 4 9 4 15c0 2 .8 3.7 2 5 .3-4 3-8 8-10-4 3-6 6-6.500 10.500C17 20 20 13 20 3z"/></svg>
+  <svg class="leaf" style="--x:90%;--s:30px;--d:66s;--dl:-30s" viewBox="0 0 24 24"><path fill="currentColor" d="M20 3C9 3 4 9 4 15c0 2 .8 3.7 2 5 .3-4 3-8 8-10-4 3-6 6-6.500 10.500C17 20 20 13 20 3z"/></svg>
+</div>
 <div id="app"></div>
 <div id="timer" hidden>
   <div class="tbox" id="tbox">
@@ -551,7 +608,7 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
     var bal = balance();
     return [
       h('a', { class: 'back', href: '#' }, '← К книге'),
-      h('section', { class: 'panel prof' }, avatarEl('lg'), nameIn,
+      h('section', { class: 'panel prof t2' }, avatarEl('lg'), nameIn,
         h('div', { class: 'acts' },
           h('button', { type: 'button', class: 'btn small', onclick: function () { file.click(); } }, S.avatar ? 'Другое фото' : 'Добавить фото'),
           S.avatar ? h('button', { type: 'button', class: 'btn small ghost', onclick: function () { S.avatar = ''; save(); render(); } }, 'Убрать') : null),
@@ -588,7 +645,7 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
     else line = 'Готовь, копи баллы и меняй их на подарки.';
     if (next) bar = h('div', { class: 'progress', role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': next.cost, 'aria-valuenow': bal },
       h('i', { style: 'width:' + Math.min(100, Math.round(bal / next.cost * 100)) + '%' }));
-    return h('section', { class: 'panel' },
+    return h('section', { class: 'panel t1' },
       h('h2', null, 'Мои баллы'),
       h('div', { class: 'pts' }, h('span', { class: 'big' }, String(bal)), h('span', { class: 'muted' }, plural(bal, PTS))),
       bar, h('p', { class: 'small muted' }, line),
@@ -598,7 +655,7 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
   }
   function giftsPanel() {
     var bal = balance();
-    return h('section', { class: 'panel', id: 'gifts' },
+    return h('section', { class: 'panel t2', id: 'gifts' },
       h('h2', null, 'Подарки'),
       h('p', { class: 'small muted' }, 'Подарок вручает взрослый. Баллы списываются, когда ты его получаешь.'),
       GIFTS.map(function (g) {
@@ -644,7 +701,7 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
       });
       out.push(q);
     }
-    order.forEach(function (key) {
+    order.forEach(function (key, gi) {
       var list = groups[key], chars = [];
       list.forEach(function (r) { if (chars.indexOf(r.char) < 0) chars.push(r.char); });
       var single = list.length === 1;           /* одно блюдо в аниме: без группы */
@@ -664,7 +721,7 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
           items.push(el);
         });
       });
-      out.push(h('section', { class: 'group' }, single ? null : h('h2', null, key), items));
+      out.push(h('section', { class: 'group g' + (gi % 3) }, single ? null : h('h2', null, key), items));
     });
     out.push(giftsPanel());
     return out;
@@ -716,8 +773,8 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
         })),
         r.intro ? h('p', { class: 'intro' }, r.intro) : null),
       h('a', { class: 'btn big', href: '#cook-' + r.id }, 'Готовим по шагам'),
-      h('section', { class: 'panel' }, h('h2', null, 'Сколько порций'), servingsSeg(r)),
-      h('section', { class: 'panel' }, h('h2', null, 'Что нужно'), ingList(r)),
+      h('section', { class: 'panel t1' }, h('h2', null, 'Сколько порций'), servingsSeg(r)),
+      h('section', { class: 'panel t2' }, h('h2', null, 'Что нужно'), ingList(r)),
       h('h2', null, 'Как готовим'),
       h('ol', { class: 'steps' }, r.steps.map(function (s, i) {
         var key = r.id + ':s' + i;
