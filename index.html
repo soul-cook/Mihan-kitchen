@@ -246,7 +246,7 @@ body.cooking #timer { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .rew:first-of-type { border-top: 0; padding-top: 0; }
 .rew .rt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .rew .rt b { display: block; }
-.rew .rd { font-size: 13px; color: var(--muted); }
+.rew .rd { display: block; font-size: 13px; color: var(--muted); }
 .sw3 { display: flex; flex: none; }
 .sw3 i { width: 18px; height: 40px; display: block; }
 .sw3 i:first-child { border-radius: 8px 0 0 8px; } .sw3 i:last-child { border-radius: 0 8px 8px 0; }
@@ -284,6 +284,22 @@ body.cooking #bg { opacity: .45; }
 .group.g1 .rcard { border-left: 6px solid var(--accent); }
 .group.g2 .rcard { border-left: 6px solid var(--btn); }
 .group.g0 h2 { border-color: var(--num); } .group.g1 h2 { border-color: var(--accent); } .group.g2 h2 { border-color: var(--btn); }
+/* Примерка подарков */
+.tiles { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 8px; margin: 0 -2px; scroll-snap-type: x proximity; }
+.tile { appearance: none; font: inherit; color: var(--fg); cursor: pointer; flex: none; width: 116px; scroll-snap-align: start; text-align: center;
+  background: var(--surface); border: 1.5px solid var(--line); border-radius: 16px; padding: 12px 8px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.tile:active { border-color: var(--accent); }
+.tile .tn { font-weight: 600; font-size: 13px; line-height: 1.25; }
+.tile .tc { font-size: 12px; color: var(--muted); }
+.tile .sw3 { margin: 4px 0 6px; } .tile .sw3 i { height: 36px; }
+.rew .rbtns { display: flex; flex-direction: column; gap: 6px; flex: none; }
+.rew .rbtns .btn { min-height: 38px; font-size: 13px; padding: 6px 12px; }
+#pv { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--surface); border-top: 2px solid var(--btn);
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+#pv .in { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+#pv .pt { font-size: 14px; } #pv .pt b { display: block; font-size: 16px; }
+#pv .pb { display: flex; gap: 8px; } #pv .pb .btn { flex: 1; min-height: 44px; }
+body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px)); }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -303,6 +319,7 @@ body.cooking #bg { opacity: .45; }
     <button type="button" class="btn small" id="tbtn">Стоп</button>
   </div>
 </div>
+<div id="pv" hidden></div>
 <div id="lb" hidden></div>
 <div id="toast" role="status" hidden></div>
 
@@ -547,11 +564,13 @@ body.cooking #bg { opacity: .45; }
   function themeById(id) { return THEMES.filter(function (t) { return t.id === id; })[0]; }
   function frameById(id) { return FRAMES.filter(function (f) { return f.id === id; })[0]; }
   function owned(kind, item) { return !item.cost || !!S.own[kind + ':' + item.id]; }
+  var PV = null;   /* примерка: { kind: 'theme' | 'frame', id } */
   function applyTheme() {
     var t = themeById(S.theme);
     if (!t || !owned('theme', t)) { t = THEMES[0]; S.theme = t ? t.id : 'tea'; }
+    if (PV && PV.kind === 'theme' && themeById(PV.id)) t = themeById(PV.id);
     var d = document.documentElement;
-    d.dataset.theme = S.theme;
+    d.dataset.theme = t.id;
     d.dataset.mode = t && t.mode ? t.mode : (mq && mq.matches ? 'dark' : 'light');
     var bg = getComputedStyle(d).getPropertyValue('--bg').trim();
     var m = document.querySelector('meta[name="theme-color"]'); if (m && bg) m.setAttribute('content', bg);
@@ -559,9 +578,9 @@ body.cooking #bg { opacity: .45; }
   if (mq && mq.addEventListener) mq.addEventListener('change', applyTheme);
 
   function avatarEl(size) {
-    var fr = frameById(S.frame);
+    var fr = frameById(PV && PV.kind === 'frame' ? PV.id : S.frame), pvFr = !!(PV && PV.kind === 'frame');
     var inner = S.avatar ? h('img', { src: S.avatar, alt: '' }) : (S.name ? S.name.trim().charAt(0).toUpperCase() : '☺');
-    return h('span', { class: 'avatar ' + (size || '') + (fr && fr.id !== 'none' && owned('frame', fr) ? ' fr-' + fr.id : '') }, h('span', { class: 'in' }, inner));
+    return h('span', { class: 'avatar ' + (size || '') + (fr && fr.id !== 'none' && (pvFr || owned('frame', fr)) ? ' fr-' + fr.id : '') }, h('span', { class: 'in' }, inner));
   }
   function readAvatar(file, done) {
     var fr = new FileReader();
@@ -587,13 +606,51 @@ body.cooking #bg { opacity: .45; }
           save(); applyTheme(); toast('Открыто: ' + item.name); render();
         } }, { text: 'Отмена', ghost: true }]);
   }
+  var pvEl = document.getElementById('pv');
+  function startPreview(kind, item) { PV = { kind: kind, id: item.id }; applyTheme(); render(); }
+  function endPreview() { PV = null; applyTheme(); render(); }
+  function renderPreviewBar() {
+    document.body.classList.toggle('previewing', !!PV);
+    if (!PV) { pvEl.hidden = true; pvEl.replaceChildren(); return; }
+    var kind = PV.kind, item = kind === 'theme' ? themeById(PV.id) : frameById(PV.id);
+    if (!item) { PV = null; pvEl.hidden = true; return; }
+    var bal = balance(), has = owned(kind, item);
+    var main = has ? h('button', { type: 'button', class: 'btn', onclick: function () {
+        if (kind === 'theme') S.theme = item.id; else S.frame = item.id; PV = null; save(); applyTheme(); render(); } }, 'Включить')
+      : h('button', { type: 'button', class: 'btn', disabled: bal < item.cost, onclick: function () { PV = null; applyTheme(); unlock(kind, item); } },
+        bal < item.cost ? 'Не хватает ' + (item.cost - bal) + ' ' + plural(item.cost - bal, PTS) : 'Открыть за ' + item.cost);
+    pvEl.replaceChildren(h('div', { class: 'in' },
+      h('div', { class: 'pt' }, h('b', null, 'Примерка: «' + item.name + '»'), has ? 'Уже твоё.' : 'Так будет выглядеть, когда откроешь. У тебя ' + bal + ' ' + plural(bal, PTS) + '.'),
+      h('div', { class: 'pb' }, main, h('button', { type: 'button', class: 'btn ghost', onclick: endPreview }, 'Закрыть'))));
+    pvEl.hidden = false;
+  }
+  function tileFor(kind, item) {
+    var has = owned(kind, item);
+    var pic = kind === 'theme'
+      ? h('span', { class: 'sw3', 'aria-hidden': 'true' }, (item.swatch || []).map(function (c) { return h('i', { style: 'background:' + c }); }))
+      : h('span', { class: 'avatar sm' + (item.id !== 'none' ? ' fr-' + item.id : '') }, h('span', { class: 'in' }, '☺'));
+    return h('button', { type: 'button', class: 'tile', onclick: function () { startPreview(kind, item); }, 'aria-label': 'Примерить: ' + item.name },
+      pic, h('span', { class: 'tn' }, item.name), h('span', { class: 'tc' }, has ? 'Твоё' : item.cost + ' ' + plural(item.cost, PTS)));
+  }
+  function rewardsShowcase() {
+    return h('section', { class: 'panel t2', id: 'gifts' },
+      h('h2', null, 'Подарки'),
+      h('p', { class: 'small muted' }, 'За баллы открываются новые оформления и рамки для фото. Нажми на подарок, чтобы примерить.'),
+      h('div', { class: 'small muted' }, 'Оформления'),
+      h('div', { class: 'tiles' }, THEMES.map(function (t) { return tileFor('theme', t); })),
+      h('div', { class: 'small muted' }, 'Рамки'),
+      h('div', { class: 'tiles' }, FRAMES.map(function (f) { return tileFor('frame', f); })),
+      h('a', { class: 'btn small ghost', href: '#profile' }, 'Мой профиль'));
+  }
   function rewardRow(kind, item, cur, preview) {
     var has = owned(kind, item), bal = balance(), btn;
     if (cur === item.id) btn = h('button', { type: 'button', class: 'btn small ghost', disabled: true }, 'Выбрано');
     else if (has) btn = h('button', { type: 'button', class: 'btn small', onclick: function () {
       if (kind === 'theme') S.theme = item.id; else S.frame = item.id; save(); applyTheme(); render(); } }, 'Включить');
-    else btn = h('button', { type: 'button', class: 'btn small', disabled: bal < item.cost, onclick: function () { unlock(kind, item); } },
-      bal < item.cost ? 'Ещё ' + (item.cost - bal) : 'Открыть за ' + item.cost);
+    else btn = h('div', { class: 'rbtns' },
+      h('button', { type: 'button', class: 'btn small ghost', onclick: function () { startPreview(kind, item); } }, 'Примерить'),
+      h('button', { type: 'button', class: 'btn small', disabled: bal < item.cost, onclick: function () { unlock(kind, item); } },
+        bal < item.cost ? 'Ещё ' + (item.cost - bal) : 'Открыть за ' + item.cost));
     return h('div', { class: 'rew' }, preview,
       h('div', { class: 'rt' }, h('b', null, item.name), item.desc ? h('span', { class: 'rd' }, item.desc) : null,
         has ? null : h('span', { class: 'rd' }, item.cost + ' ' + plural(item.cost, PTS))), btn);
@@ -614,12 +671,12 @@ body.cooking #bg { opacity: .45; }
           S.avatar ? h('button', { type: 'button', class: 'btn small ghost', onclick: function () { S.avatar = ''; save(); render(); } }, 'Убрать') : null),
         file,
         h('p', { class: 'small muted' }, 'У тебя ' + bal + ' ' + plural(bal, PTS) + '. Фото хранится только на этом телефоне.')),
-      h('section', { class: 'panel' }, h('h2', null, 'Оформление'),
-        h('p', { class: 'small muted' }, 'Новые наряды для книги. Открываются за баллы, потом можно переключаться когда угодно.'),
+      h('section', { class: 'panel' }, h('h2', null, 'Подарки: оформление'),
+        h('p', { class: 'small muted' }, 'Новые подарки для книги. Нажми «Примерить», чтобы увидеть заранее. Открытое остаётся навсегда.'),
         THEMES.map(function (t) {
           return rewardRow('theme', t, S.theme, h('span', { class: 'sw3', 'aria-hidden': 'true' }, (t.swatch || []).map(function (c) { return h('i', { style: 'background:' + c }); })));
         })),
-      h('section', { class: 'panel' }, h('h2', null, 'Рамки для фото'),
+      h('section', { class: 'panel' }, h('h2', null, 'Подарки: рамки для фото'),
         FRAMES.map(function (f) {
           var prev = h('span', { class: 'avatar sm' + (f.id !== 'none' ? ' fr-' + f.id : '') }, h('span', { class: 'in' }, '☺'));
           return rewardRow('frame', f, S.frame, prev);
@@ -640,7 +697,7 @@ body.cooking #bg { opacity: .45; }
     var sorted = GIFTS.slice().sort(function (a, b) { return a.cost - b.cost; });
     var next = sorted.filter(function (g) { return g.cost > bal; })[0];
     var line, bar = null;
-    if (sorted.length && sorted[0].cost <= bal) line = 'Уже хватает на подарок. Загляни в раздел «Подарки».';
+    if (sorted.length && sorted[0].cost <= bal) line = 'Уже хватает на подарок.';
     else if (next) line = 'До подарка «' + next.title + '» ещё ' + (next.cost - bal) + ' ' + plural(next.cost - bal, PTS) + '.';
     else line = 'Готовь, копи баллы и меняй их на подарки.';
     if (next) bar = h('div', { class: 'progress', role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': next.cost, 'aria-valuenow': bal },
@@ -723,7 +780,7 @@ body.cooking #bg { opacity: .45; }
       });
       out.push(h('section', { class: 'group g' + (gi % 3) }, single ? null : h('h2', null, key), items));
     });
-    out.push(giftsPanel());
+    out.push(rewardsShowcase());
     return out;
   }
 
@@ -842,7 +899,7 @@ body.cooking #bg { opacity: .45; }
 
   function render() {
     var y = window.scrollY, rt = route();
-    applyTheme();
+    applyTheme(); renderPreviewBar();
     var r = rt.id ? find(rt.id) : null;
     var old = document.getElementById('cookbar-slot'); if (old) old.remove();
     document.body.classList.toggle('cooking', !!(rt.cook && r));
