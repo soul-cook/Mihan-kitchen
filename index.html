@@ -300,6 +300,41 @@ body.cooking #bg { opacity: .45; }
 #pv .pt { font-size: 14px; } #pv .pt b { display: block; font-size: 16px; }
 #pv .pb { display: flex; gap: 8px; } #pv .pb .btn { flex: 1; min-height: 44px; }
 body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px)); }
+/* Путь подарков */
+.pass { gap: 14px; }
+.passhead { display: flex; align-items: center; gap: 14px; }
+.lvl { flex: none; width: 64px; height: 64px; display: grid; place-items: center; background: var(--num); color: var(--num-ink);
+  font-family: var(--font-display); font-weight: 700; font-size: 19px; padding-top: 6px;
+  clip-path: polygon(50% 0, 62% 33%, 98% 36%, 70% 58%, 80% 94%, 50% 74%, 20% 94%, 30% 58%, 2% 36%, 38% 33%); }
+.passbar { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.passtxt { font-size: 14px; overflow-wrap: anywhere; } .passtxt b { font-family: var(--font-display); font-size: 17px; margin-right: 6px; }
+.progress { height: 10px; }
+.track { display: flex; overflow-x: auto; padding: 8px 2px 12px; margin: 0 -4px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+.node { flex: none; width: 108px; display: flex; flex-direction: column; align-items: center; gap: 10px; scroll-snap-align: center; }
+.ncard { appearance: none; font: inherit; color: var(--fg); cursor: pointer; position: relative; width: 94px; height: 124px; padding: 8px 6px; border-radius: 14px;
+  background: var(--surface); border: 2px solid var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.ncard.locked { background: color-mix(in srgb, var(--surface) 70%, var(--line)); }
+.ncard.locked > :not(.mark) { opacity: .75; }
+.ncard.using { border-color: var(--accent); }
+.ncard.sel { border-color: var(--num); box-shadow: 0 0 0 3px var(--num); }
+.ncard .tn { font-weight: 600; font-size: 12.5px; line-height: 1.2; }
+.ncard .tk { font-size: 11px; color: var(--muted); }
+.ncard .mark { position: absolute; top: 5px; left: 6px; color: var(--muted); display: grid; }
+.ncard .mark.ok { color: var(--accent); font-weight: 700; font-size: 16px; }
+.sw3.big i { width: 18px; height: 54px; } .sw3.huge i { width: 36px; height: 96px; }
+.sw3.huge { flex: none; }
+.nline { position: relative; width: 100%; height: 30px; display: grid; place-items: center; }
+.nline::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 5px; transform: translateY(-50%);
+  background: linear-gradient(90deg, var(--num) var(--f), var(--line) var(--f)); }
+.nline b { position: relative; z-index: 1; min-width: 38px; height: 28px; padding: 0 8px; border-radius: 14px; display: grid; place-items: center;
+  background: var(--surface); border: 2px solid var(--line); font-size: 13px; font-variant-numeric: tabular-nums; }
+.node.done .nline b { background: var(--num); border-color: var(--num); color: var(--num-ink); }
+.detail { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; }
+.detail .dtxt { display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.detail .dtxt b { font-family: var(--font-display); font-size: 18px; }
+.detail .dacts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%; }
+.detail .dacts .btn { flex: 1 1 160px; }
+.ok { color: var(--accent); font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -563,7 +598,7 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
   var mq = window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null;
   function themeById(id) { return THEMES.filter(function (t) { return t.id === id; })[0]; }
   function frameById(id) { return FRAMES.filter(function (f) { return f.id === id; })[0]; }
-  function owned(kind, item) { return !item.cost || !!S.own[kind + ':' + item.id]; }
+  function owned(kind, item) { return !item.cost || S.earned >= item.cost; }   /* открывается само, когда набрано нужное число баллов */
   var PV = null;   /* примерка: { kind: 'theme' | 'frame', id } */
   function applyTheme() {
     var t = themeById(S.theme);
@@ -617,10 +652,9 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
     var bal = balance(), has = owned(kind, item);
     var main = has ? h('button', { type: 'button', class: 'btn', onclick: function () {
         if (kind === 'theme') S.theme = item.id; else S.frame = item.id; PV = null; save(); applyTheme(); render(); } }, 'Включить')
-      : h('button', { type: 'button', class: 'btn', disabled: bal < item.cost, onclick: function () { PV = null; applyTheme(); unlock(kind, item); } },
-        bal < item.cost ? 'Не хватает ' + (item.cost - bal) + ' ' + plural(item.cost - bal, PTS) : 'Открыть за ' + item.cost);
+      : h('button', { type: 'button', class: 'btn', disabled: true }, 'Откроется на ' + item.cost + ' ' + plural(item.cost, PTS));
     pvEl.replaceChildren(h('div', { class: 'in' },
-      h('div', { class: 'pt' }, h('b', null, 'Примерка: «' + item.name + '»'), has ? 'Уже твоё.' : 'Так будет выглядеть, когда откроешь. У тебя ' + bal + ' ' + plural(bal, PTS) + '.'),
+      h('div', { class: 'pt' }, h('b', null, 'Примерка: «' + item.name + '»'), has ? 'Уже твоё.' : 'Так будет выглядеть, когда откроешь. Ещё ' + (item.cost - S.earned) + ' ' + plural(item.cost - S.earned, PTS) + '.'),
       h('div', { class: 'pb' }, main, h('button', { type: 'button', class: 'btn ghost', onclick: endPreview }, 'Закрыть'))));
     pvEl.hidden = false;
   }
@@ -670,17 +704,8 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
           h('button', { type: 'button', class: 'btn small', onclick: function () { file.click(); } }, S.avatar ? 'Другое фото' : 'Добавить фото'),
           S.avatar ? h('button', { type: 'button', class: 'btn small ghost', onclick: function () { S.avatar = ''; save(); render(); } }, 'Убрать') : null),
         file,
-        h('p', { class: 'small muted' }, 'У тебя ' + bal + ' ' + plural(bal, PTS) + '. Фото хранится только на этом телефоне.')),
-      h('section', { class: 'panel' }, h('h2', null, 'Подарки: оформление'),
-        h('p', { class: 'small muted' }, 'Новые подарки для книги. Нажми «Примерить», чтобы увидеть заранее. Открытое остаётся навсегда.'),
-        THEMES.map(function (t) {
-          return rewardRow('theme', t, S.theme, h('span', { class: 'sw3', 'aria-hidden': 'true' }, (t.swatch || []).map(function (c) { return h('i', { style: 'background:' + c }); })));
-        })),
-      h('section', { class: 'panel' }, h('h2', null, 'Подарки: рамки для фото'),
-        FRAMES.map(function (f) {
-          var prev = h('span', { class: 'avatar sm' + (f.id !== 'none' ? ' fr-' + f.id : '') }, h('span', { class: 'in' }, '☺'));
-          return rewardRow('frame', f, S.frame, prev);
-        }))
+        h('p', { class: 'small muted' }, 'Фото хранится только на этом телефоне.')),
+      h('a', { class: 'btn ghost', href: '#gifts' }, 'Подарки: оформления и рамки')
     ];
   }
   function nextReward() {
@@ -692,23 +717,94 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
   }
 
   /* Главная */
+  function rewardTrack() {
+    var list = [];
+    THEMES.forEach(function (t) { list.push({ kind: 'theme', item: t }); });
+    FRAMES.forEach(function (f) { list.push({ kind: 'frame', item: f }); });
+    return list.map(function (x, i) { x.i = i; return x; }).sort(function (a, b) { return (a.item.cost - b.item.cost) || (a.i - b.i); });
+  }
   function pointsPanel() {
-    var bal = balance();
-    var sorted = GIFTS.slice().sort(function (a, b) { return a.cost - b.cost; });
-    var next = sorted.filter(function (g) { return g.cost > bal; })[0];
-    var line, bar = null;
-    if (sorted.length && sorted[0].cost <= bal) line = 'Уже хватает на подарок.';
-    else if (next) line = 'До подарка «' + next.title + '» ещё ' + (next.cost - bal) + ' ' + plural(next.cost - bal, PTS) + '.';
-    else line = 'Готовь, копи баллы и меняй их на подарки.';
-    if (next) bar = h('div', { class: 'progress', role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': next.cost, 'aria-valuenow': bal },
-      h('i', { style: 'width:' + Math.min(100, Math.round(bal / next.cost * 100)) + '%' }));
+    var pts = S.earned, tr = rewardTrack();
+    var next = tr.filter(function (x) { return x.item.cost > pts; })[0];
+    var bar = null, line;
+    if (next) {
+      bar = h('div', { class: 'progress', role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': next.item.cost, 'aria-valuenow': pts },
+        h('i', { style: 'width:' + Math.min(100, Math.round(pts / next.item.cost * 100)) + '%' }));
+      var left = next.item.cost - pts;
+      line = 'До подарка «' + next.item.name + '» (' + (next.kind === 'theme' ? 'оформление' : 'рамка') + ') ещё ' + left + ' ' + plural(left, PTS) + '.';
+    } else line = 'Все подарки открыты. Это самый вкусный результат!';
     return h('section', { class: 'panel t1' },
       h('h2', null, 'Мои баллы'),
-      h('div', { class: 'pts' }, h('span', { class: 'big' }, String(bal)), h('span', { class: 'muted' }, plural(bal, PTS))),
+      h('div', { class: 'pts' }, h('span', { class: 'big' }, String(pts)), h('span', { class: 'muted' }, plural(pts, PTS) + (next ? ' из ' + next.item.cost : ''))),
       bar, h('p', { class: 'small muted' }, line),
-      nextReward() ? h('p', { class: 'small muted' }, nextReward()) : null,
       h('p', { class: 'small muted' }, 'Приготовлено блюд: ' + S.cooked.length),
-      h('a', { class: 'btn small ghost', href: '#profile' }, 'Подарки и профиль'));
+      h('a', { class: 'btn small', href: '#gifts' }, 'Подарки'));
+  }
+
+  /* Путь подарков: набираешь баллы, и по дороге открываются оформления и рамки */
+  var selR = null, trackX = null;
+  function lockSvg() { return svg('<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M17 9V7a5 5 0 0 0-10 0v2H5v12h14V9h-2zm-8-2a3 3 0 0 1 6 0v2H9V7z"/></svg>'); }
+  function viewGifts() {
+    var pts = S.earned, tr = rewardTrack();
+    var openedN = tr.filter(function (x) { return x.item.cost > 0 && pts >= x.item.cost; }).length;
+    var next = tr.filter(function (x) { return x.item.cost > pts; })[0];
+    if (!selR || !tr.some(function (x) { return x.kind === selR.kind && x.item.id === selR.id; })) {
+      var d0 = next || tr[tr.length - 1]; selR = { kind: d0.kind, id: d0.item.id };
+    }
+    /* где на дороге сейчас прогресс: P = номер узла + доля пути к следующему */
+    var k = 0; tr.forEach(function (x, i) { if (x.item.cost <= pts) k = i; });
+    var P = k + 0.5;
+    if (k < tr.length - 1) { var c0 = tr[k].item.cost, c1 = tr[k + 1].item.cost; P = k + (pts - c0) / (c1 - c0); } else P = tr.length;
+    var head = h('div', { class: 'passhead' },
+      h('div', { class: 'lvl', 'aria-label': 'Открыто подарков' }, String(openedN)),
+      h('div', { class: 'passbar' },
+        h('div', { class: 'passtxt' }, h('b', null, pts + (next ? ' / ' + next.item.cost : '')), h('span', { class: 'muted' }, next ? ' до «' + next.item.name + '»' : ' всё открыто')),
+        h('div', { class: 'progress' }, h('i', { style: 'width:' + (next ? Math.min(100, Math.round(pts / next.item.cost * 100)) : 100) + '%' }))));
+    var track = h('div', { class: 'track', role: 'list' }, tr.map(function (x, i) {
+      var it = x.item, has = owned(x.kind, it), sel = selR.kind === x.kind && selR.id === it.id;
+      var using = has && (x.kind === 'theme' ? S.theme === it.id : S.frame === it.id);
+      var pic = x.kind === 'theme'
+        ? h('span', { class: 'sw3 big', 'aria-hidden': 'true' }, (it.swatch || []).map(function (c) { return h('i', { style: 'background:' + c }); }))
+        : h('span', { class: 'avatar sm' + (it.id !== 'none' ? ' fr-' + it.id : '') }, h('span', { class: 'in' }, '☺'));
+      var f = Math.max(0, Math.min(1, P - i + 0.5)) * 100;
+      var card = h('button', { type: 'button', class: 'ncard' + (has ? '' : ' locked') + (sel ? ' sel' : '') + (using ? ' using' : ''), 'aria-label': it.name + (has ? '' : ', закрыто'),
+        onclick: function () { selR = { kind: x.kind, id: it.id }; render(); } },
+        has ? (using ? h('span', { class: 'mark ok' }, '✓') : null) : h('span', { class: 'mark' }, lockSvg()),
+        pic, h('span', { class: 'tn' }, it.name), h('span', { class: 'tk' }, x.kind === 'theme' ? 'оформление' : 'рамка'));
+      return h('div', { class: 'node' + (has ? ' done' : ''), role: 'listitem', 'data-sel': sel ? '1' : null },
+        card, h('div', { class: 'nline', style: '--f:' + f + '%' }, h('b', null, String(it.cost))));
+    }));
+    track.addEventListener('scroll', function () { trackX = track.scrollLeft; });
+    /* подробности выбранного подарка */
+    var cur = tr.filter(function (x) { return x.kind === selR.kind && x.item.id === selR.id; })[0], it = cur.item;
+    var has = owned(cur.kind, it);
+    var using = has && (cur.kind === 'theme' ? S.theme === it.id : S.frame === it.id);
+    var big;
+    if (cur.kind === 'frame') {
+      var fr = it.id === 'none' ? '' : ' fr-' + it.id;
+      big = h('span', { class: 'avatar lg' + fr }, h('span', { class: 'in' }, S.avatar ? h('img', { src: S.avatar, alt: '' }) : (S.name ? S.name.trim().charAt(0).toUpperCase() : '☺')));
+    } else big = h('span', { class: 'sw3 huge', 'aria-hidden': 'true' }, (it.swatch || []).map(function (c) { return h('i', { style: 'background:' + c }); }));
+    var left = it.cost - pts;
+    var acts = [];
+    if (has) acts.push(h('button', { type: 'button', class: 'btn', disabled: using, onclick: function () {
+      if (cur.kind === 'theme') S.theme = it.id; else S.frame = it.id; save(); applyTheme(); render(); } }, using ? 'Сейчас включено' : 'Включить'));
+    else acts.push(h('button', { type: 'button', class: 'btn', onclick: function () { startPreview(cur.kind, it); } }, 'Посмотреть, как будет'));
+    if (has && !using) acts.push(h('button', { type: 'button', class: 'btn ghost', onclick: function () { startPreview(cur.kind, it); } }, 'Предпросмотр'));
+    var detail = h('div', { class: 'detail' }, big,
+      h('div', { class: 'dtxt' }, h('b', null, it.name), h('span', { class: 'muted small' }, (cur.kind === 'theme' ? 'Оформление. ' : 'Рамка для фото. ') + (it.desc || '')),
+        has ? h('span', { class: 'small ok' }, 'Открыто') : h('span', { class: 'small' }, 'Откроется на ' + it.cost + ' ' + plural(it.cost, PTS) + ', ещё ' + left + '.')),
+      h('div', { class: 'dacts' }, acts));
+    setTimeout(function () {
+      if (trackX != null) track.scrollLeft = trackX;
+      else { var n = track.querySelector('[data-sel="1"]'); if (n) track.scrollLeft = n.offsetLeft - track.clientWidth / 2 + n.offsetWidth / 2; }
+    }, 0);
+    return [
+      h('a', { class: 'back', href: '#' }, '← К книге'),
+      h('section', { class: 'panel pass t2', id: 'gifts' }, h('h2', null, 'Подарки'),
+        h('p', { class: 'small muted' }, 'Готовь, копи баллы, и по дороге открываются новые оформления и рамки. Нажми на любой подарок, чтобы посмотреть.'),
+        head, track, detail),
+      h('a', { class: 'btn ghost', href: '#profile' }, 'Мой профиль и фото')
+    ];
   }
   function giftsPanel() {
     var bal = balance();
@@ -905,6 +1001,7 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
     if (r) document.documentElement.setAttribute('data-char', r.char); else document.documentElement.removeAttribute('data-char');
     var nodes;
     if (rt.id && !r) nodes = [h('a', { class: 'back', href: '#' }, '← К книге'), h('p', { class: 'notice' }, 'Такого рецепта нет.')];
+    else if (rt.gifts) nodes = viewGifts();
     else if (rt.profile) nodes = viewProfile();
     else if (rt.cook) nodes = viewCook(r);
     else if (rt.id) nodes = viewRecipe(r);
