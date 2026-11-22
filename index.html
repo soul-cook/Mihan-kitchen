@@ -688,7 +688,7 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
     THEMES.forEach(function (t) { if (!owned('theme', t) && (!best || t.cost < best.cost)) best = { cost: t.cost, name: 'оформление «' + t.name + '»' }; });
     FRAMES.forEach(function (f) { if (!owned('frame', f) && (!best || f.cost < best.cost)) best = { cost: f.cost, name: 'рамка «' + f.name + '»' }; });
     if (!best) return null;
-    return best.cost <= bal ? 'Уже хватает на ' + best.name + '. Загляни в профиль.' : 'До награды: ' + best.name + ', ещё ' + (best.cost - bal) + ' ' + plural(best.cost - bal, PTS) + '.';
+    return best.cost <= bal ? 'Уже хватает на ' + best.name + '. Загляни в «Подарки».' : 'До награды: ' + best.name + ', ещё ' + (best.cost - bal) + ' ' + plural(best.cost - bal, PTS) + '.';
   }
 
   /* Главная */
@@ -708,7 +708,7 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
       bar, h('p', { class: 'small muted' }, line),
       nextReward() ? h('p', { class: 'small muted' }, nextReward()) : null,
       h('p', { class: 'small muted' }, 'Приготовлено блюд: ' + S.cooked.length),
-      h('a', { class: 'btn small ghost', href: '#profile' }, 'Профиль, оформление и рамки'));
+      h('a', { class: 'btn small ghost', href: '#profile' }, 'Подарки и профиль'));
   }
   function giftsPanel() {
     var bal = balance();
@@ -780,7 +780,6 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
       });
       out.push(h('section', { class: 'group g' + (gi % 3) }, single ? null : h('h2', null, key), items));
     });
-    out.push(rewardsShowcase());
     return out;
   }
 
