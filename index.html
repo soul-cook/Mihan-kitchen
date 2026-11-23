@@ -335,6 +335,16 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
 .detail .dacts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; width: 100%; }
 .detail .dacts .btn { flex: 1 1 160px; }
 .ok { color: var(--accent); font-weight: 600; }
+/* Портреты героев */
+.cav { --s: 52px; width: var(--s); height: var(--s); flex: none; border-radius: 50%; overflow: hidden; border: 3px solid var(--ca); background: var(--cg); color: var(--ca);
+  display: grid; place-items: center; font-family: var(--font-display); font-weight: 700; font-size: calc(var(--s) * .42); line-height: 1; }
+.cav img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cav.sm { --s: 30px; border-width: 2px; }
+.cav.lg { --s: 80px; }
+.rcard { flex-direction: row; align-items: center; gap: 14px; }
+.rcard .rbody { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
+.group .sub2, .rhead .who { display: flex; align-items: center; gap: 8px; padding-left: 6px; }
+.group .sub2 { padding-block: 4px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -612,6 +622,14 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
   }
   if (mq && mq.addEventListener) mq.addEventListener('change', applyTheme);
 
+  /* Портрет героя: файл img/char-<id>.jpg, пока его нет, кружок с первой буквой в цвете героя */
+  function charAv(ck, size) {
+    var c = CHARS[ck] || { name: ck }, dark = document.documentElement.dataset.mode === 'dark';
+    var acc = (dark && c.accentDk) || c.accent || 'var(--accent)', glow = (dark && c.glowDk) || c.glow || 'var(--glow)';
+    var el = h('span', { class: 'cav ' + (size || 'md'), style: '--ca:' + acc + ';--cg:' + glow, 'aria-hidden': 'true' }, (c.name || ck).charAt(0));
+    withImage('char-' + ck, function (src) { el.replaceChildren(h('img', { src: src, alt: '' })); });
+    return el;
+  }
   function avatarEl(size) {
     var fr = frameById(PV && PV.kind === 'frame' ? PV.id : S.frame), pvFr = !!(PV && PV.kind === 'frame');
     var inner = S.avatar ? h('img', { src: S.avatar, alt: '' }) : (S.name ? S.name.trim().charAt(0).toUpperCase() : '☺');
@@ -861,15 +879,16 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
       var items = [];
       chars.forEach(function (ck) {
         var ch = CHARS[ck] || { name: ck };
-        if (chars.length > 1) items.push(h('div', { class: 'sub2' }, ch.name));
+        if (chars.length > 1) items.push(h('div', { class: 'sub2' }, charAv(ck, 'sm'), ch.name));
         list.filter(function (r) { return r.char === ck; }).forEach(function (r) {
           var cnt = cookedCount(r.id);
           var meta = [r.time, '+' + (r.pts || 0) + ' ' + plural(r.pts || 0, PTS)];
           if (cnt) meta.push('готовили: ' + cnt);
-          var el = h('a', { class: 'rcard', href: '#r-' + r.id },
-            single || chars.length === 1 ? h('span', { class: 'who2' }, single ? key + ' · ' + ch.name : ch.name) : null,
-            h('span', { class: 'top' }, h('span', { class: 't' }, r.title), S.fav[r.id] ? svg(HEART.replace('<svg', '<svg class="heart"')) : null),
-            h('span', { class: 'm' }, meta.join(' · ')));
+          var el = h('a', { class: 'rcard', href: '#r-' + r.id }, charAv(ck, 'md'),
+            h('span', { class: 'rbody' },
+              single || chars.length === 1 ? h('span', { class: 'who2' }, single ? key + ' · ' + ch.name : ch.name) : null,
+              h('span', { class: 'top' }, h('span', { class: 't' }, r.title), S.fav[r.id] ? svg(HEART.replace('<svg', '<svg class="heart"')) : null),
+              h('span', { class: 'm' }, meta.join(' · '))));
           cards.push({ el: el, text: (r.title + ' ' + ch.name + ' ' + key).toLowerCase() });
           items.push(el);
         });
@@ -918,7 +937,7 @@ body.previewing { padding-bottom: calc(150px + env(safe-area-inset-bottom, 0px))
     return [
       h('a', { class: 'back', href: '#' }, '← К книге'),
       h('div', { class: 'rhead' },
-        h('div', { class: 'who' }, ch.name),
+        h('div', { class: 'who' }, charAv(r.char, 'sm'), ch.name),
         h('div', { class: 'titlerow' }, h('h1', null, r.title), favBtn),
         h('div', { class: 'metas' }, metas.map(function (m) {
           return h('div', { class: 'meta' }, h('div', { class: 'k' }, m[0]), h('div', { class: 'v' }, m[1]));
